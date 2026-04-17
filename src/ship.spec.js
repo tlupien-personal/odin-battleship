@@ -26,4 +26,15 @@ describe("Ship", () => {
       expect(T.isSunk()).toBe(true);
     });
   });
+
+  describe("flip", () => {
+    test("toggles the isVertical flag", () => {
+      const T = new Ship(3);
+      expect(T.isVertical).toBe(false);
+      T.flip();
+      expect(T.isVertical).toBe(true);
+      T.flip();
+      expect(T.isVertical).toBe(false);
+    });
+  });
 });

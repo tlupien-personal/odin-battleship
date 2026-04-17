@@ -1,7 +1,8 @@
 class Ship {
-  constructor(length) {
+  constructor(length, isVertical = false) {
     this.length = length;
     this.hits = 0;
+    this.isVertical = isVertical;
   }
 
   hit() {
@@ -10,6 +11,10 @@ class Ship {
 
   isSunk() {
     return this.hits >= this.length;
+  }
+
+  flip() {
+    this.isVertical = !this.isVertical;
   }
 }
 
