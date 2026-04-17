@@ -103,4 +103,48 @@ describe("GameBoard", () => {
       expect(T.tracker[0][0]).toBe("hit");
     });
   });
+
+  describe("checkSinkage", () => {
+    test("false when none are sunk", () => {
+      const T = new GameBoard(0, 9);
+      T.placeShip(0, 0, new Ship(2));
+      T.placeShip(3, 5, new Ship(4, true));
+      expect(T.checkSinkage()).toBe(false);
+    });
+
+    test("false when some are sunk", () => {
+      const T = new GameBoard(0, 9);
+      T.placeShip(0, 0, new Ship(2));
+      T.placeShip(3, 5, new Ship(4, true));
+      T.receiveAttack(0, 0);
+      T.receiveAttack(0, 1);
+      expect(T.checkSinkage()).toBe(false);
+    });
+
+    test("updates tracker", () => {
+      const T = new GameBoard(0, 9);
+      T.placeShip(0, 0, new Ship(2));
+      T.placeShip(3, 5, new Ship(4, true));
+      T.receiveAttack(0, 0);
+      T.receiveAttack(0, 1);
+      T.receiveAttack(3, 5);
+      T.checkSinkage();
+      expect(T.tracker[0][0]).toBe("sunk");
+      expect(T.tracker[0][1]).toBe("sunk");
+      expect(T.tracker[3][5]).toBe("hit");
+    });
+
+    test("true when all sunk", () => {
+      const T = new GameBoard(0, 9);
+      T.placeShip(0, 0, new Ship(2));
+      T.placeShip(3, 5, new Ship(4, true));
+      T.receiveAttack(0, 0);
+      T.receiveAttack(0, 1);
+      T.receiveAttack(3, 5);
+      T.receiveAttack(4, 5);
+      T.receiveAttack(5, 5);
+      T.receiveAttack(6, 5);
+      expect(T.checkSinkage()).toBe(true);
+    });
+  });
 });

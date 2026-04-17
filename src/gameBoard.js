@@ -57,6 +57,20 @@ class GameBoard {
     this.tracker[row] ??= {};
     this.tracker[row][col] = mark;
   }
+
+  checkSinkage() {
+    let allSunk = true;
+    for (ship of this.ships) {
+      if (ship.isSunk()) {
+        for (c of ship.getCoords()) {
+          this.tracker[c[0]][c[1]] = "sunk";
+        }
+      } else {
+        allSunk = false;
+      }
+    }
+    return allSunk;
+  }
 }
 
 export { GameBoard };
