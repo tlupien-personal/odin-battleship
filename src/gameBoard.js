@@ -11,23 +11,13 @@ class GameBoard {
     if (row < this.lb || col < this.lb || row > this.ub || col > this.ub) {
       return false;
     }
-    if (ship.isVertical) {
-      const endRow = row + ship.length - 1;
-      if (endRow > this.ub) {
-        return false;
-      }
-      for (let i = row; i <= endRow; i++) {
-        if (this.layout[i]?.[col]) {
+    for (let i = 0; i < ship.length; i++) {
+      if (ship.isVertical) {
+        if (row + i > this.ub || this.layout[row + i]?.[col]) {
           return false;
         }
-      }
-    } else {
-      const endCol = col + ship.length - 1;
-      if (endCol > this.ub) {
-        return false;
-      }
-      for (let i = col; i <= endCol; i++) {
-        if (this.layout[row]?.[i]) {
+      } else {
+        if (col + i > this.ub || this.layout[row]?.[col + i]) {
           return false;
         }
       }
@@ -39,19 +29,17 @@ class GameBoard {
     if (!this.canPlaceShip(row, col, ship)) {
       throw new Error("Illegal ship placement.");
     }
+    ship.place(row, col);
     this.ships.push(ship);
-    if (ship.isVertical) {
-      const endRow = row + ship.length - 1;
-      for (let i = row; i <= endRow; i++) {
-        this.layout[i] ??= {};
-        this.layout[i][col] = ship;
-      }
-    } else {
-      const endCol = col + ship.length - 1;
-      this.layout[row] ??= {};
-      for (let i = col; i <= endCol; i++) {
-        this.layout[row][i] = ship;
-      }
+    for (const c of ship.getCoords()) {
+      this.layout[c[0]] ??= {};
+      this.layout[c[0]][c[1]] = ship;
+    }
+  }
+
+  receiveAttack(row, col) {
+    if (row < this.lb || col < this.lb || row > this.ub || col > this.ub) {
+      throw new Error("Out of bounds");
     }
   }
 }
