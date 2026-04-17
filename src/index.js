@@ -1,4 +1,5 @@
 import "./reset.css";
 import "./style.css";
+import { GameController } from "./gameController.js";
 
-console.log("Hello, World!");
+const gameController = new GameController();

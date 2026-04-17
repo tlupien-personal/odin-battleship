@@ -147,4 +147,34 @@ describe("GameBoard", () => {
       expect(T.checkSinkage()).toBe(true);
     });
   });
+
+  describe("getSquareInfo", () => {
+    test("null case", () => {
+      const T = new GameBoard(0, 9);
+      expect(T.getSquareInfo(0, 0)).toBe(null);
+    });
+
+    test("not null case", () => {
+      const T = new GameBoard(0, 9);
+      T.receiveAttack(0, 0);
+      expect(T.getSquareInfo(0, 0)).not.toBe(null);
+    });
+  });
+
+  describe("getAllShipCoords", () => {
+    test("works", () => {
+      const T = new GameBoard(0, 9);
+      T.placeShip(0, 0, new Ship(2));
+      T.placeShip(3, 3, new Ship(2, true));
+      const R = T.getAllShipCoords();
+      expect(R[0][0]).toBe(0);
+      expect(R[0][1]).toBe(0);
+      expect(R[1][0]).toBe(0);
+      expect(R[1][1]).toBe(1);
+      expect(R[2][0]).toBe(3);
+      expect(R[2][1]).toBe(3);
+      expect(R[3][0]).toBe(4);
+      expect(R[3][1]).toBe(3);
+    });
+  });
 });

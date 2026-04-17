@@ -71,6 +71,20 @@ class GameBoard {
     }
     return allSunk;
   }
+
+  getSquareInfo(row, col) {
+    return this.tracker[row]?.[col] ?? null;
+  }
+
+  getAllShipCoords() {
+    const result = [];
+    for (const ship of this.ships) {
+      for (const c of ship.getCoords()) {
+        result.push(c);
+      }
+    }
+    return result;
+  }
 }
 
 export { GameBoard };
