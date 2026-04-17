@@ -77,4 +77,30 @@ describe("GameBoard", () => {
       expect(T.layout[0][2]).toBe(ship);
     });
   });
+
+  describe("receiveAttack", () => {
+    test("error on out of bounds coord", () => {
+      const T = new GameBoard(0, 9);
+      expect(() => T.receiveAttack(-1, -1)).toThrow();
+    });
+
+    test("error on duplicate attack", () => {
+      const T = new GameBoard(0, 9);
+      T.receiveAttack(0, 0);
+      expect(() => T.receiveAttack(0, 0)).toThrow();
+    });
+
+    test("marks misses correctly", () => {
+      const T = new GameBoard(0, 9);
+      T.receiveAttack(0, 0);
+      expect(T.tracker[0][0]).toBe("miss");
+    });
+
+    test("marks hits correctly", () => {
+      const T = new GameBoard(0, 9);
+      T.placeShip(0, 0, new Ship(1));
+      T.receiveAttack(0, 0);
+      expect(T.tracker[0][0]).toBe("hit");
+    });
+  });
 });

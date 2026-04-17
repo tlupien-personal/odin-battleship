@@ -27,7 +27,7 @@ class GameBoard {
 
   placeShip(row, col, ship) {
     if (!this.canPlaceShip(row, col, ship)) {
-      throw new Error("Illegal ship placement.");
+      throw new Error("Illegal ship placement");
     }
     ship.place(row, col);
     this.ships.push(ship);
@@ -41,6 +41,21 @@ class GameBoard {
     if (row < this.lb || col < this.lb || row > this.ub || col > this.ub) {
       throw new Error("Out of bounds");
     }
+
+    if (this.tracker[row]?.[col]) {
+      throw new Error("Already played");
+    }
+
+    let mark;
+    if (this.layout[row]?.[col]) {
+      this.layout[row][col].hit();
+      mark = "hit";
+    } else {
+      mark = "miss";
+    }
+
+    this.tracker[row] ??= {};
+    this.tracker[row][col] = mark;
   }
 }
 
