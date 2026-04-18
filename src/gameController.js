@@ -12,15 +12,34 @@ class GameController {
     this.player1 = new Player(new GameBoard("player-1"), true);
     this.player2 = new Player(new GameBoard("player-2"), false);
     this.computer = new ComputerMoveSource(this.player1.board, "random");
-    // probably not right ^
-    this.player1.board.placeShip(0, 0, new Ship(3, false));
-    this.player2.board.placeShip(0, 0, new Ship(3, false));
+
+    const shipLengths = [5, 4, 3, 3, 2];
+    for (const player of [this.player1, this.player2]) {
+      console.log(player.board.id);
+      for (const l of shipLengths) {
+        console.log(l);
+        let placed = false;
+        while (!placed) {
+          const ship = new Ship(l);
+          if (Math.random() >= 0.5) {
+            ship.flip();
+          }
+          const row = Math.floor(Math.random() * player.board.ub);
+          const col = Math.floor(Math.random() * player.board.ub);
+          if (player.board.canPlaceShip(row, col, ship)) {
+            player.board.placeShip(row, col, ship);
+            placed = true;
+          }
+        }
+      }
+    }
 
     this.view = new BoardView();
 
     this.view.initializeBoard(this.player1.board, () => {});
     this.view.toggleShips(this.player1.board);
     this.view.initializeBoard(this.player2.board, (e) => this.#doHumanTurn(e));
+    // this.view.toggleShips(this.player2.board);
 
     this.attacker = this.player1;
     this.defender = this.player2;

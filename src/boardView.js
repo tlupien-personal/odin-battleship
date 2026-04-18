@@ -15,6 +15,12 @@ class BoardView {
       for (let j = board.lb; j <= board.ub; j++) {
         const square = document.createElement("div");
         square.classList.add("square");
+        if (i === board.ub) {
+          square.classList.add("last-row");
+        }
+        if (j === board.lb) {
+          square.classList.add("first-col");
+        }
         square.setAttribute("data-row", i);
         square.setAttribute("data-col", j);
         square.setAttribute("data-board-id", boardId);
