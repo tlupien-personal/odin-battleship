@@ -60,9 +60,9 @@ class GameBoard {
 
   checkSinkage() {
     let allSunk = true;
-    for (ship of this.ships) {
+    for (const ship of this.ships) {
       if (ship.isSunk()) {
-        for (c of ship.getCoords()) {
+        for (const c of ship.getCoords()) {
           this.tracker[c[0]][c[1]] = "sunk";
         }
       } else {

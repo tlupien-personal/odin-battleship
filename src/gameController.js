@@ -12,6 +12,7 @@ class GameController {
     this.player1 = new Player(new GameBoard(), 1, true);
     this.player2 = new Player(new GameBoard(), 2, false);
     this.computer = new ComputerMoveSource(this.player1.board, "random");
+    this.player1.board.placeShip(0, 0, new Ship(3, false));
     this.player2.board.placeShip(0, 0, new Ship(3, false));
 
     this.views = {
@@ -24,12 +25,14 @@ class GameController {
     };
 
     this.views[1].initializeBoard();
+    this.views[1].toggleShips();
     this.views[2].initializeBoard();
 
     this.whoseTurn = this.player1;
   }
 
   #makeTurnFunction(player, opp) {
+    // TODO: refactor this... a lot...
     return (e) => {
       if (this.whoseTurn !== player) {
         return;
@@ -39,8 +42,16 @@ class GameController {
         const moveResult = player.sendAttack(opp, row, col);
         if (moveResult) {
           this.views[opp.id].updateSquare(row, col);
-          this.whoseTurn = opp;
-          if (!opp.isHuman) {
+          const gameOver = opp.board.checkSinkage();
+          for (const c of opp.board.getAllShipCoords()) {
+            this.views[opp.id].updateSquare(c[0], c[1]);
+          }
+          if (gameOver) {
+            this.whoseTurn = null;
+          } else {
+            this.whoseTurn = opp;
+          }
+          if (!opp.isHuman && this.whoseTurn === opp) {
             let computerMoveResult = false;
             let move;
             while (!computerMoveResult) {
@@ -48,7 +59,15 @@ class GameController {
               computerMoveResult = opp.sendAttack(player, move[0], move[1]);
             }
             this.views[player.id].updateSquare(move[0], move[1]);
-            this.whoseTurn = player;
+            const gameOver = player.board.checkSinkage();
+            for (const c of player.board.getAllShipCoords()) {
+              this.views[player.id].updateSquare(c[0], c[1]);
+            }
+            if (gameOver) {
+              this.whoseTurn = null;
+            } else {
+              this.whoseTurn = player;
+            }
           }
         }
       }
