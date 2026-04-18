@@ -1,6 +1,8 @@
 class Player {
-  constructor(board) {
+  constructor(board, id, isHuman = true) {
     this.board = board;
+    this.id = id;
+    this.isHuman = isHuman;
   }
 
   sendAttack(other, row, col) {

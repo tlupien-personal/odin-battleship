@@ -1,12 +1,14 @@
 class BoardView {
-  constructor(board, id) {
+  constructor(board, id, turn) {
     this.board = board;
+    this.id = id;
     this.display = document.querySelector(`#${id}`);
+    this.turn = turn;
   }
 
   #findSquare(row, col) {
     const square = document.querySelector(
-      `.square[data-row="${row}"][data-col="${col}"]`,
+      `#${this.id} .square[data-row="${row}"][data-col="${col}"]`,
     );
     return square;
   }
@@ -20,6 +22,7 @@ class BoardView {
         square.classList.add("square");
         square.setAttribute("data-row", i);
         square.setAttribute("data-col", j);
+        square.addEventListener("click", this.turn);
         this.display.appendChild(square);
       }
     }
@@ -35,7 +38,7 @@ class BoardView {
 
   updateSquare(row, col) {
     const square = this.#findSquare(row, col);
-    const state = this.board.getSquare(row, col);
+    const state = this.board.getSquareInfo(row, col);
     square.classList.add(state);
   }
 }
