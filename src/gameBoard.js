@@ -1,5 +1,6 @@
 class GameBoard {
-  constructor(lb = 0, ub = 9) {
+  constructor(id, lb = 0, ub = 9) {
+    this.id = id;
     this.lb = lb;
     this.ub = ub;
     this.ships = [];

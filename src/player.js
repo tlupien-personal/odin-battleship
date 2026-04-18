@@ -1,7 +1,6 @@
 class Player {
-  constructor(board, id, isHuman = true) {
+  constructor(board, isHuman = true) {
     this.board = board;
-    this.id = id;
     this.isHuman = isHuman;
   }
 

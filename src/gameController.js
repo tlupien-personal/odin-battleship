@@ -9,69 +9,85 @@ class GameController {
     // default case is human vs computer, others will come later
     // also this is basically testing code at this point...
 
-    this.player1 = new Player(new GameBoard(), 1, true);
-    this.player2 = new Player(new GameBoard(), 2, false);
+    this.player1 = new Player(new GameBoard("player-1"), true);
+    this.player2 = new Player(new GameBoard("player-2"), false);
     this.computer = new ComputerMoveSource(this.player1.board, "random");
+    // probably not right ^
     this.player1.board.placeShip(0, 0, new Ship(3, false));
     this.player2.board.placeShip(0, 0, new Ship(3, false));
 
-    this.views = {
-      1: new BoardView(this.player1.board, `board-1`, () => {}),
-      2: new BoardView(
-        this.player2.board,
-        `board-2`,
-        this.#makeTurnFunction(this.player1, this.player2),
-      ),
-    };
+    this.view = new BoardView();
 
-    this.views[1].initializeBoard();
-    this.views[1].toggleShips();
-    this.views[2].initializeBoard();
+    this.view.initializeBoard(this.player1.board, () => {});
+    this.view.toggleShips(this.player1.board);
+    this.view.initializeBoard(this.player2.board, (e) => this.#doHumanTurn(e));
 
-    this.whoseTurn = this.player1;
+    this.attacker = this.player1;
+    this.defender = this.player2;
+    this.gameOver = false;
   }
 
-  #makeTurnFunction(player, opp) {
-    // TODO: refactor this... a lot...
-    return (e) => {
-      if (this.whoseTurn !== player) {
-        return;
-      } else {
-        const row = e.target.getAttribute("data-row");
-        const col = e.target.getAttribute("data-col");
-        const moveResult = player.sendAttack(opp, row, col);
-        if (moveResult) {
-          this.views[opp.id].updateSquare(row, col);
-          const gameOver = opp.board.checkSinkage();
-          for (const c of opp.board.getAllShipCoords()) {
-            this.views[opp.id].updateSquare(c[0], c[1]);
-          }
-          if (gameOver) {
-            this.whoseTurn = null;
-          } else {
-            this.whoseTurn = opp;
-          }
-          if (!opp.isHuman && this.whoseTurn === opp) {
-            let computerMoveResult = false;
-            let move;
-            while (!computerMoveResult) {
-              move = this.computer.generateMove();
-              computerMoveResult = opp.sendAttack(player, move[0], move[1]);
-            }
-            this.views[player.id].updateSquare(move[0], move[1]);
-            const gameOver = player.board.checkSinkage();
-            for (const c of player.board.getAllShipCoords()) {
-              this.views[player.id].updateSquare(c[0], c[1]);
-            }
-            if (gameOver) {
-              this.whoseTurn = null;
-            } else {
-              this.whoseTurn = player;
-            }
-          }
-        }
-      }
-    };
+  #doComputerMove() {
+    let computerMoveResult = false;
+    let move;
+    while (!computerMoveResult) {
+      move = this.computer.generateMove();
+      computerMoveResult = this.attacker.sendAttack(
+        this.defender,
+        move[0],
+        move[1],
+      );
+    }
+    this.view.updateSquare(this.defender.board, move[0], move[1]);
+  }
+
+  #passTurn() {
+    const temp = this.defender;
+    this.defender = this.attacker;
+    this.attacker = temp;
+    if (!this.attacker.isHuman) {
+      this.#doComputerTurn();
+    }
+  }
+
+  #updateSunk() {
+    for (const c of this.defender.board.getAllShipCoords()) {
+      this.view.updateSquare(this.defender.board, c[0], c[1]);
+    }
+  }
+
+  #isGameOver() {
+    const gameOver = this.defender.board.checkSinkage();
+    this.#updateSunk();
+    return gameOver;
+  }
+
+  #doHumanTurn(e) {
+    if (this.gameOver) {
+      return;
+    }
+    const square = e.target;
+    if (this.attacker.board.id === square.getAttribute("data-board-id")) {
+      return;
+    }
+    const row = square.getAttribute("data-row");
+    const col = square.getAttribute("data-col");
+    const moveResult = this.attacker.sendAttack(this.defender, row, col);
+    if (!moveResult) {
+      return;
+    }
+    this.view.updateSquare(this.defender.board, row, col);
+    this.gameOver = this.#isGameOver();
+    this.#passTurn();
+  }
+
+  #doComputerTurn() {
+    if (this.gameOver) {
+      return;
+    }
+    this.#doComputerMove();
+    this.gameOver = this.#isGameOver();
+    this.#passTurn();
   }
 }
 
