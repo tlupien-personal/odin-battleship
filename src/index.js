@@ -1,5 +1,5 @@
+import { GrandOrchestrator } from "./grandOrchestrator.js";
 import "./reset.css";
 import "./style.css";
-import { GameController } from "./gameController.js";
 
-const gameController = new GameController();
+const grandOrchestrator = new GrandOrchestrator();

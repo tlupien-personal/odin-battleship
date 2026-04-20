@@ -9,6 +9,7 @@ class BoardView {
   initializeBoard(board, turnFunction) {
     const boardId = board.id;
     const display = document.querySelector("#" + boardId);
+    display.innerText = "";
     display.style.gridTemplateColumns = `repeat(${board.ub + 1}, 1fr)`;
     display.style.gridTemplateRows = `repeat(${board.ub + 1}, 1fr)`;
     for (let i = board.lb; i <= board.ub; i++) {

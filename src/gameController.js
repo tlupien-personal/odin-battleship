@@ -1,62 +1,16 @@
-import { Player } from "./player.js";
 import { BoardView } from "./boardView.js";
-import { GameBoard } from "./gameBoard.js";
-import { Ship } from "./ship.js";
-import { ComputerMoveSource } from "./computerMoveSource.js";
 
 class GameController {
-  constructor() {
-    // default case is human vs computer, others will come later
-    // also this is basically testing code at this point...
-
-    this.player1 = new Player(new GameBoard("player-1"), true);
-    this.player2 = new Player(new GameBoard("player-2"), false);
-    this.computer = new ComputerMoveSource(this.player1.board, "random");
-
-    const shipLengths = [5, 4, 3, 3, 2];
-    for (const player of [this.player1, this.player2]) {
-      console.log(player.board.id);
-      for (const l of shipLengths) {
-        console.log(l);
-        let placed = false;
-        while (!placed) {
-          const ship = new Ship(l);
-          if (Math.random() >= 0.5) {
-            ship.flip();
-          }
-          const row = Math.floor(Math.random() * player.board.ub);
-          const col = Math.floor(Math.random() * player.board.ub);
-          if (player.board.canPlaceShip(row, col, ship)) {
-            player.board.placeShip(row, col, ship);
-            placed = true;
-          }
-        }
-      }
-    }
-
-    this.view = new BoardView();
-
-    this.view.initializeBoard(this.player1.board, () => {});
-    this.view.toggleShips(this.player1.board);
-    this.view.initializeBoard(this.player2.board, (e) => this.#doHumanTurn(e));
-    // this.view.toggleShips(this.player2.board);
-
-    this.attacker = this.player1;
-    this.defender = this.player2;
+  constructor(left, right, advance) {
+    this.attacker = left;
+    this.defender = right;
+    this.advance = advance;
     this.gameOver = false;
+    this.view = new BoardView();
   }
 
   #doComputerMove() {
-    let computerMoveResult = false;
-    let move;
-    while (!computerMoveResult) {
-      move = this.computer.generateMove();
-      computerMoveResult = this.attacker.sendAttack(
-        this.defender,
-        move[0],
-        move[1],
-      );
-    }
+    const move = this.attacker.computerAttack(this.defender);
     this.view.updateSquare(this.defender.board, move[0], move[1]);
   }
 
@@ -65,7 +19,7 @@ class GameController {
     this.defender = this.attacker;
     this.attacker = temp;
     if (!this.attacker.isHuman) {
-      this.#doComputerTurn();
+      this.doComputerTurn();
     }
   }
 
@@ -76,13 +30,16 @@ class GameController {
   }
 
   #isGameOver() {
-    const gameOver = this.defender.board.checkSinkage();
+    this.gameOver = this.defender.board.checkSinkage();
     this.#updateSunk();
-    return gameOver;
+    if (this.gameOver) {
+      this.advance();
+    }
   }
 
-  #doHumanTurn(e) {
+  doHumanTurn(e) {
     if (this.gameOver) {
+      // ideally, this should just no longer be called at all
       return;
     }
     const square = e.target;
@@ -96,17 +53,23 @@ class GameController {
       return;
     }
     this.view.updateSquare(this.defender.board, row, col);
-    this.gameOver = this.#isGameOver();
+    this.#isGameOver();
     this.#passTurn();
   }
 
-  #doComputerTurn() {
+  doComputerTurn() {
     if (this.gameOver) {
       return;
     }
     this.#doComputerMove();
-    this.gameOver = this.#isGameOver();
+    this.#isGameOver();
     this.#passTurn();
+  }
+
+  takeOverDisplay() {
+    this.view.initializeBoard(this.attacker.board, () => {});
+    this.view.toggleShips(this.attacker.board);
+    this.view.initializeBoard(this.defender.board, (e) => this.doHumanTurn(e));
   }
 }
 
