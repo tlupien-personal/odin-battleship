@@ -1,19 +1,19 @@
-import { BoardView } from "./boardView.js";
 import { Ship } from "./ship.js";
 
 class PlacementController {
-  constructor(left, right, advance) {
+  constructor(boardView, left, right, advance) {
     this.left = left;
     this.right = right;
     this.advance = advance;
     this.shipLengths = [5, 4, 3, 3, 2]; // magic numbers? o_O
-    this.view = new BoardView();
+    this.view = boardView;
     // probably gonna need like a PlacementView that has-a BoardView instead
     // to implement randomize button and future drag and drop
     // just want to get it working for now tho tbh
   }
 
   #doRandomPlacement(board) {
+    board.reset();
     for (const l of this.shipLengths) {
       let placed = false;
       while (!placed) {
@@ -35,7 +35,7 @@ class PlacementController {
     this.#doRandomPlacement(this.left.board);
     this.#doRandomPlacement(this.right.board);
     this.view.initializeBoard(this.left.board, () => {});
-    this.view.toggleShips(this.left.board);
+    this.view.showShips(this.left.board);
     this.view.initializeBoard(this.right.board, () => {});
     // immediate advance until button is there
     this.advance();

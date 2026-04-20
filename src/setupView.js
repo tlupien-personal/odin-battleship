@@ -34,6 +34,7 @@ class SetupView {
 
   showForm(id) {
     const container = document.querySelector("#" + id + "-board");
+    container.innerText = "";
     const form = this.#createForm(id);
     container.appendChild(form);
   }
@@ -42,6 +43,7 @@ class SetupView {
     const container = document.querySelector("#" + id + "-board");
     container.innerText = "";
     const p = document.createElement("p");
+    p.classList.add("ready-msg");
     p.innerText = "Ready!";
     container.appendChild(p);
   }

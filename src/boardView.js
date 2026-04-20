@@ -10,6 +10,7 @@ class BoardView {
     const boardId = board.id;
     const display = document.querySelector("#" + boardId);
     display.innerText = "";
+    display.classList.remove("fade-game");
     display.style.gridTemplateColumns = `repeat(${board.ub + 1}, 1fr)`;
     display.style.gridTemplateRows = `repeat(${board.ub + 1}, 1fr)`;
     for (let i = board.lb; i <= board.ub; i++) {
@@ -31,12 +32,21 @@ class BoardView {
     }
   }
 
-  toggleShips(board) {
+  showShips(board) {
     const boardId = board.id;
     const shipCoords = board.getAllShipCoords();
     for (const c of shipCoords) {
       const square = this.#findSquare(boardId, c[0], c[1]);
-      square.classList.toggle("ship");
+      square.classList.add("ship");
+    }
+  }
+
+  hideShips(board) {
+    const boardId = board.id;
+    const shipCoords = board.getAllShipCoords();
+    for (const c of shipCoords) {
+      const square = this.#findSquare(boardId, c[0], c[1]);
+      square.classList.remove("ship");
     }
   }
 
@@ -44,7 +54,14 @@ class BoardView {
     const boardId = board.id;
     const square = this.#findSquare(boardId, row, col);
     const state = board.getSquareInfo(row, col);
-    square.classList.add(state);
+    if (state != null) {
+      square.classList.add(state);
+    }
+  }
+
+  fade(board) {
+    const display = document.querySelector("#" + board.id);
+    display.classList.add("fade-game");
   }
 }
 

@@ -1,12 +1,10 @@
-import { BoardView } from "./boardView.js";
-
 class GameController {
-  constructor(left, right, advance) {
+  constructor(boardView, left, right, advance) {
     this.attacker = left;
     this.defender = right;
     this.advance = advance;
     this.gameOver = false;
-    this.view = new BoardView();
+    this.view = boardView;
   }
 
   #doComputerMove() {
@@ -15,9 +13,14 @@ class GameController {
   }
 
   #passTurn() {
+    if (this.gameOver) {
+      return;
+    }
     const temp = this.defender;
     this.defender = this.attacker;
     this.attacker = temp;
+    this.view.hideShips(this.defender.board);
+    this.view.showShips(this.attacker.board);
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
     }
@@ -67,9 +70,12 @@ class GameController {
   }
 
   takeOverDisplay() {
-    this.view.initializeBoard(this.attacker.board, () => {});
-    this.view.toggleShips(this.attacker.board);
+    this.view.initializeBoard(this.attacker.board, (e) => this.doHumanTurn(e));
     this.view.initializeBoard(this.defender.board, (e) => this.doHumanTurn(e));
+    this.view.showShips(this.attacker.board);
+    if (!this.attacker.isHuman) {
+      this.doComputerTurn();
+    }
   }
 }
 

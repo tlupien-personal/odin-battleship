@@ -96,6 +96,12 @@ class GameBoard {
     }
     return result;
   }
+
+  reset() {
+    this.ships = [];
+    this.tracker = {};
+    this.layout = {};
+  }
 }
 
 export { GameBoard };
