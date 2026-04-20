@@ -51,6 +51,22 @@ describe("GameBoard", () => {
       expect(T.canPlaceShip(0, 1, new Ship(3, true))).toBe(false);
       expect(T.canPlaceShip(0, 2, new Ship(3, true))).toBe(false);
     });
+
+    test("false when ships touch", () => {
+      const T = new GameBoard();
+      T.placeShip(1, 1, new Ship(2));
+      const S = new Ship(1);
+      expect(T.canPlaceShip(0, 0, S)).toBe(false);
+      expect(T.canPlaceShip(0, 1, S)).toBe(false);
+      expect(T.canPlaceShip(0, 2, S)).toBe(false);
+      expect(T.canPlaceShip(0, 3, S)).toBe(false);
+      expect(T.canPlaceShip(1, 0, S)).toBe(false);
+      expect(T.canPlaceShip(1, 3, S)).toBe(false);
+      expect(T.canPlaceShip(1, 0, S)).toBe(false);
+      expect(T.canPlaceShip(1, 1, S)).toBe(false);
+      expect(T.canPlaceShip(1, 2, S)).toBe(false);
+      expect(T.canPlaceShip(1, 3, S)).toBe(false);
+    });
   });
 
   describe("placeShip", () => {

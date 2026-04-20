@@ -12,13 +12,23 @@ class GameBoard {
     if (row < this.lb || col < this.lb || row > this.ub || col > this.ub) {
       return false;
     }
-    for (let i = 0; i < ship.length; i++) {
+    for (let i = -1; i < ship.length + 1; i++) {
       if (ship.isVertical) {
-        if (row + i > this.ub || this.layout[row + i]?.[col]) {
+        if (
+          row + i > this.ub ||
+          this.layout[row + i]?.[col] ||
+          this.layout[row + i]?.[col - 1] ||
+          this.layout[row + i]?.[col + 1]
+        ) {
           return false;
         }
       } else {
-        if (col + i > this.ub || this.layout[row]?.[col + i]) {
+        if (
+          col + i > this.ub ||
+          this.layout[row]?.[col + i] ||
+          this.layout[row - 1]?.[col + i] ||
+          this.layout[row + 1]?.[col + i]
+        ) {
           return false;
         }
       }
