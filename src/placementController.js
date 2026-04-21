@@ -1,3 +1,4 @@
+import { PlacementView } from "./placementView.js";
 import { Ship } from "./ship.js";
 
 class PlacementController {
@@ -6,13 +7,11 @@ class PlacementController {
     this.right = right;
     this.advance = advance;
     this.shipLengths = [5, 4, 3, 3, 2]; // magic numbers? o_O
-    this.view = boardView;
-    // probably gonna need like a PlacementView that has-a BoardView instead
-    // to implement randomize button and future drag and drop
-    // just want to get it working for now tho tbh
+    this.boardView = boardView;
+    this.placementView = new PlacementView();
   }
 
-  #doRandomPlacement(board) {
+  #doRandomPlacement(board, ready) {
     board.reset();
     for (const l of this.shipLengths) {
       let placed = false;
@@ -29,16 +28,37 @@ class PlacementController {
         }
       }
     }
+    this.boardView.initializeBoard(board, () => {});
+    this.boardView.showShips(board);
+    this.placementView.addButtons(
+      board,
+      () => this.#doRandomPlacement(board, ready),
+      () => ready(),
+    );
+  }
+
+  #switchPlacementTurn() {
+    if (this.left.isHuman && this.right.isHuman) {
+      this.boardView.block(0);
+    }
+    this.placementView.removeButtons(this.left.board);
+    this.boardView.indicateTurn(this.right.board, this.left.board);
+    this.#doRandomPlacement(this.right.board, () => this.advance());
+    if (!this.right.isHuman) {
+      this.advance();
+    }
   }
 
   takeOverDisplay() {
-    this.#doRandomPlacement(this.left.board);
-    this.#doRandomPlacement(this.right.board);
-    this.view.initializeBoard(this.left.board, () => {});
-    this.view.initializeBoard(this.right.board, () => {});
-    this.view.indicateTurn(this.left.board, this.right.board);
-    // immediate advance until button is there
-    this.advance();
+    if (this.left.isHuman && this.right.isHuman) {
+      this.boardView.block(0);
+    }
+    this.boardView.initializeBoard(this.right.board);
+    this.#doRandomPlacement(this.left.board, () => this.#switchPlacementTurn());
+    this.boardView.indicateTurn(this.left.board, this.right.board);
+    if (!this.left.isHuman) {
+      this.#switchPlacementTurn();
+    }
   }
 }
 

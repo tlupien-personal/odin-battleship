@@ -16,12 +16,15 @@ class GameController {
     if (this.gameOver) {
       return;
     }
-    const temp = this.defender;
-    this.defender = this.attacker;
-    this.attacker = temp;
+    const newAttacker = this.defender;
+    const newDefender = this.attacker;
     if (this.attacker.isHuman && this.defender.isHuman) {
+      this.defender = null;
+      this.attacker = null;
       await this.view.block(2000); // temp
     }
+    this.defender = newDefender;
+    this.attacker = newAttacker;
     this.view.indicateTurn(this.attacker.board, this.defender.board);
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
@@ -43,8 +46,7 @@ class GameController {
   }
 
   async doHumanTurn(e) {
-    if (this.gameOver) {
-      // ideally, this should just no longer be called at all
+    if (this.gameOver || this.attacker == null) {
       return;
     }
     const square = e.target;
@@ -74,7 +76,10 @@ class GameController {
   takeOverDisplay() {
     this.view.initializeBoard(this.attacker.board, (e) => this.doHumanTurn(e));
     this.view.initializeBoard(this.defender.board, (e) => this.doHumanTurn(e));
-    this.view.showShips(this.attacker.board);
+    if (this.attacker.isHuman && this.defender.isHuman) {
+      this.view.block(0);
+    }
+    this.view.indicateTurn(this.attacker.board, this.defender.board);
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
     }

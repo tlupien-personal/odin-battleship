@@ -86,11 +86,11 @@ class BoardView {
       block.addEventListener("click", () => this.unblock());
 
       const p1 = document.createElement("p");
-      p1.innerText = "Pass the Device";
+      p1.innerText = "Click to Show";
       block.appendChild(p1);
 
       const p2 = document.createElement("p");
-      p2.innerText = "Then Click to Show";
+      p2.innerText = "Only Green May Look";
       block.appendChild(p2);
 
       board.appendChild(block);
