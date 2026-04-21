@@ -12,19 +12,19 @@ class GameController {
     this.view.updateSquare(this.defender.board, move[0], move[1]);
   }
 
-  #passTurn() {
+  async #passTurn() {
     if (this.gameOver) {
       return;
     }
     const temp = this.defender;
     this.defender = this.attacker;
     this.attacker = temp;
+    if (this.attacker.isHuman && this.defender.isHuman) {
+      await this.view.block(2000); // temp
+    }
     this.view.indicateTurn(this.attacker.board, this.defender.board);
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
-    }
-    if (this.attacker.isHuman && this.defender.isHuman) {
-      this.view.block(); // wack
     }
   }
 
@@ -42,7 +42,7 @@ class GameController {
     }
   }
 
-  doHumanTurn(e) {
+  async doHumanTurn(e) {
     if (this.gameOver) {
       // ideally, this should just no longer be called at all
       return;
@@ -59,7 +59,7 @@ class GameController {
     }
     this.view.updateSquare(this.defender.board, row, col);
     this.#isGameOver();
-    this.#passTurn();
+    await this.#passTurn();
   }
 
   doComputerTurn() {

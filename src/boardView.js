@@ -75,13 +75,24 @@ class BoardView {
     defender.classList.remove("attack-border");
   }
 
-  block() {
+  async block(timeout) {
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await sleep(timeout);
     const boards = document.querySelectorAll(".board");
     boards.forEach((board) => {
       const block = document.createElement("div");
       block.classList.add("board-overlay");
       block.classList.add("block");
       block.addEventListener("click", () => this.unblock());
+
+      const p1 = document.createElement("p");
+      p1.innerText = "Pass the Device";
+      block.appendChild(p1);
+
+      const p2 = document.createElement("p");
+      p2.innerText = "Then Click to Show";
+      block.appendChild(p2);
+
       board.appendChild(block);
     });
   }
