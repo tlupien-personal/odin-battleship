@@ -7,6 +7,7 @@ class SetupView {
   #createForm(id) {
     const form = document.createElement("form");
     form.id = id + "-form";
+    form.classList.add("board-overlay");
 
     const label = document.createElement("label");
     label.setAttribute("for", "isHuman");
@@ -35,6 +36,8 @@ class SetupView {
   showForm(id) {
     const container = document.querySelector("#" + id + "-board");
     container.innerText = "";
+    container.classList.remove("attack-border");
+    container.classList.remove("defense-border");
     const form = this.#createForm(id);
     container.appendChild(form);
   }
@@ -44,6 +47,7 @@ class SetupView {
     container.innerText = "";
     const p = document.createElement("p");
     p.classList.add("ready-msg");
+    p.classList.add("board-overlay");
     p.innerText = "Ready!";
     container.appendChild(p);
   }

@@ -19,10 +19,12 @@ class GameController {
     const temp = this.defender;
     this.defender = this.attacker;
     this.attacker = temp;
-    this.view.hideShips(this.defender.board);
-    this.view.showShips(this.attacker.board);
+    this.view.indicateTurn(this.attacker.board, this.defender.board);
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
+    }
+    if (this.attacker.isHuman && this.defender.isHuman) {
+      this.view.block(); // wack
     }
   }
 

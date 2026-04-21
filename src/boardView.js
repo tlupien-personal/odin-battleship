@@ -63,6 +63,33 @@ class BoardView {
     const display = document.querySelector("#" + board.id);
     display.classList.add("fade-game");
   }
+
+  indicateTurn(attackerBoard, defenderBoard) {
+    const attacker = document.querySelector("#" + attackerBoard.id);
+    const defender = document.querySelector("#" + defenderBoard.id);
+    this.showShips(attackerBoard);
+    this.hideShips(defenderBoard);
+    attacker.classList.add("attack-border");
+    attacker.classList.remove("defense-border");
+    defender.classList.add("defense-border");
+    defender.classList.remove("attack-border");
+  }
+
+  block() {
+    const boards = document.querySelectorAll(".board");
+    boards.forEach((board) => {
+      const block = document.createElement("div");
+      block.classList.add("board-overlay");
+      block.classList.add("block");
+      block.addEventListener("click", () => this.unblock());
+      board.appendChild(block);
+    });
+  }
+
+  unblock() {
+    const blocks = document.querySelectorAll(".block");
+    blocks.forEach((block) => block.remove());
+  }
 }
 
 export { BoardView };

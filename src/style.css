@@ -4,8 +4,7 @@ body {
 
 .boards {
   display: grid;
-  grid-template-columns: repeat(2, 500px);
-  grid-template-rows: 500px;
+  grid-template-columns: repeat(auto-fit, min(90vw, 500px));
   gap: 50px;
   align-items: center;
   justify-content: center;
@@ -17,6 +16,17 @@ body {
   height: 100%;
   display: grid;
   position: relative;
+  aspect-ratio: 1 / 1;
+}
+
+.attack-border {
+  border: 2px solid teal;
+  box-shadow: 2px 2px 4px teal;
+}
+
+.defense-border {
+  border: 2px solid coral;
+  box-shadow: 2px 2px 4px coral;
 }
 
 .square {
@@ -37,39 +47,39 @@ body {
 }
 
 .miss {
-  background-color: blue;
+  background-color: lavender;
 }
 
 .hit {
-  background-color: red;
+  background-color: coral;
 }
 
 .sunk {
-  background-color: green;
+  background-color: teal;
 }
 
-.board form {
+.board-overlay {
   height: 100%;
   width: 100%;
   position: absolute;
+  border: 1px solid black;
+  z-index: 2;
+}
+
+.board form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 25px;
   padding: 50px;
-  border: 1px solid black;
 }
 
 .ready-msg {
-  height: 100%;
-  width: 100%;
-  position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  border: 1px solid black;
 }
 
 form div {
@@ -84,6 +94,8 @@ button {
   border-radius: 5px;
   border: none;
   opacity: 0.8;
+  background-color: teal;
+  color: white;
 }
 
 button:hover {
@@ -96,16 +108,12 @@ button:hover {
 }
 
 .end-card {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 25px;
-  background-color: rgba(0 0 0 / 0.2);
+  background-color: rgba(0 0 0 / 0.05);
 }
 
 .end-card p {
@@ -116,4 +124,8 @@ button:hover {
   display: flex;
   gap: 25px;
   justify-content: center;
+}
+
+.block {
+  background-color: black;
 }

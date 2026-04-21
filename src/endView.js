@@ -7,6 +7,7 @@ class EndView {
 
   #createWinMsg() {
     const card = document.createElement("div");
+
     const msg = document.createElement("p");
     msg.innerText = "You Win!";
 
@@ -48,6 +49,7 @@ class EndView {
       msg = this.#createLossMsg();
     }
     msg.classList.add("end-card");
+    msg.classList.add("board-overlay");
 
     board.appendChild(msg);
   }

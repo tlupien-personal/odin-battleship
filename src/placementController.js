@@ -35,8 +35,8 @@ class PlacementController {
     this.#doRandomPlacement(this.left.board);
     this.#doRandomPlacement(this.right.board);
     this.view.initializeBoard(this.left.board, () => {});
-    this.view.showShips(this.left.board);
     this.view.initializeBoard(this.right.board, () => {});
+    this.view.indicateTurn(this.left.board, this.right.board);
     // immediate advance until button is there
     this.advance();
   }
