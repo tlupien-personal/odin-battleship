@@ -1,7 +1,7 @@
 class SetupView {
-  constructor({ left, right }) {
-    this.left = left;
-    this.right = right;
+  constructor({ leftCallback, rightCallback }) {
+    this.leftCallback = leftCallback;
+    this.rightCallback = rightCallback;
   }
 
   #createForm(id) {
@@ -27,7 +27,7 @@ class SetupView {
 
     const button = document.createElement("button");
     button.innerText = "Ready";
-    button.addEventListener("click", (e) => this[id](e));
+    button.addEventListener("click", (e) => this[id + "Callback"](e));
     form.appendChild(button);
 
     return form;

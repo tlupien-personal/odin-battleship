@@ -5,8 +5,8 @@ import { SetupView } from "./setupView.js";
 class SetupController {
   constructor(advance) {
     this.view = new SetupView({
-      left: (e) => this.#handleForm(e, "left"),
-      right: (e) => this.#handleForm(e, "right"),
+      leftCallback: (e) => this.#handleForm(e, "left"),
+      rightCallback: (e) => this.#handleForm(e, "right"),
     });
     this.advance = advance;
     this.players = {};

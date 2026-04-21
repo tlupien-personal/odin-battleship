@@ -4,12 +4,17 @@ class GameController {
     this.defender = right;
     this.advance = advance;
     this.gameOver = false;
-    this.view = boardView;
+    this.boardView = boardView;
   }
 
   #doComputerMove() {
     const move = this.attacker.computerAttack(this.defender);
-    this.view.updateSquare(this.defender.board, move[0], move[1]);
+    this.boardView.updateSquare(
+      this.defender.board.id,
+      move[0],
+      move[1],
+      this.defender.board.getSquareInfo(move[0], move[1]),
+    );
   }
 
   async #passTurn() {
@@ -21,11 +26,16 @@ class GameController {
     if (this.attacker.isHuman && this.defender.isHuman) {
       this.defender = null;
       this.attacker = null;
-      await this.view.block(2000); // temp
+      await this.boardView.block(2000); // temp
     }
     this.defender = newDefender;
     this.attacker = newAttacker;
-    this.view.indicateTurn(this.attacker.board, this.defender.board);
+    this.boardView.indicateTurn(
+      this.attacker.board.id,
+      this.attacker.board.getAllShipCoords(),
+      this.defender.board.id,
+      this.defender.board.getAllShipCoords(),
+    );
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
     }
@@ -33,7 +43,12 @@ class GameController {
 
   #updateSunk() {
     for (const c of this.defender.board.getAllShipCoords()) {
-      this.view.updateSquare(this.defender.board, c[0], c[1]);
+      this.boardView.updateSquare(
+        this.defender.board.id,
+        c[0],
+        c[1],
+        this.defender.board.getSquareInfo(c[0], c[1]),
+      );
     }
   }
 
@@ -59,7 +74,12 @@ class GameController {
     if (!moveResult) {
       return;
     }
-    this.view.updateSquare(this.defender.board, row, col);
+    this.boardView.updateSquare(
+      this.defender.board.id,
+      row,
+      col,
+      this.defender.board.getSquareInfo(row, col),
+    );
     this.#isGameOver();
     await this.#passTurn();
   }
@@ -74,12 +94,27 @@ class GameController {
   }
 
   takeOverDisplay() {
-    this.view.initializeBoard(this.attacker.board, (e) => this.doHumanTurn(e));
-    this.view.initializeBoard(this.defender.board, (e) => this.doHumanTurn(e));
+    this.boardView.initializeBoard(
+      this.attacker.board.id,
+      this.attacker.board.lb,
+      this.attacker.board.ub,
+      (e) => this.doHumanTurn(e),
+    );
+    this.boardView.initializeBoard(
+      this.defender.board.id,
+      this.defender.board.lb,
+      this.defender.board.ub,
+      (e) => this.doHumanTurn(e),
+    );
     if (this.attacker.isHuman && this.defender.isHuman) {
-      this.view.block(0);
+      this.boardView.block(0);
     }
-    this.view.indicateTurn(this.attacker.board, this.defender.board);
+    this.boardView.indicateTurn(
+      this.attacker.board.id,
+      this.attacker.board.getAllShipCoords(),
+      this.defender.board.id,
+      this.defender.board.getAllShipCoords(),
+    );
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
     }

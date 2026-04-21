@@ -1,6 +1,5 @@
 class EndView {
-  constructor(boardView, rematch, reset) {
-    this.boardView = boardView;
+  constructor(rematch, reset) {
     this.rematch = rematch;
     this.reset = reset;
   }
@@ -37,10 +36,8 @@ class EndView {
     return card;
   }
 
-  displayEndMessage(player, isWinner) {
-    const board = document.querySelector("#" + player.board.id);
-    this.boardView.showShips(player.board);
-    this.boardView.fade(player.board);
+  displayEndMessage(boardId, isWinner) {
+    const board = document.querySelector("#" + boardId);
 
     let msg;
     if (isWinner) {

@@ -7,16 +7,16 @@ class PlacementView {
     return button;
   }
 
-  addButtons(board, randomize, ready) {
-    const display = document.querySelector("#" + board.id);
+  addButtons(boardId, randomize, ready) {
+    const display = document.querySelector("#" + boardId);
     const randomizeButton = this.#createButton("Randomize", randomize);
     const readyButton = this.#createButton("Ready", ready);
     display.appendChild(randomizeButton);
     display.appendChild(readyButton);
   }
 
-  removeButtons(board) {
-    const buttons = document.querySelectorAll("#" + board.id + " button");
+  removeButtons(boardId) {
+    const buttons = document.querySelectorAll("#" + boardId + " button");
     buttons.forEach((button) => button.remove());
   }
 }

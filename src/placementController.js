@@ -28,10 +28,10 @@ class PlacementController {
         }
       }
     }
-    this.boardView.initializeBoard(board, () => {});
-    this.boardView.showShips(board);
+    this.boardView.initializeBoard(board.id, board.lb, board.ub, () => {});
+    this.boardView.showShips(board.id, board.getAllShipCoords());
     this.placementView.addButtons(
-      board,
+      board.id,
       () => this.#doRandomPlacement(board, ready),
       () => ready(),
     );
@@ -41,8 +41,13 @@ class PlacementController {
     if (this.left.isHuman && this.right.isHuman) {
       this.boardView.block(0);
     }
-    this.placementView.removeButtons(this.left.board);
-    this.boardView.indicateTurn(this.right.board, this.left.board);
+    this.placementView.removeButtons(this.left.board.id);
+    this.boardView.indicateTurn(
+      this.right.board.id,
+      this.right.board.getAllShipCoords(),
+      this.left.board.id,
+      this.left.board.getAllShipCoords(),
+    );
     this.#doRandomPlacement(this.right.board, () => this.advance());
     if (!this.right.isHuman) {
       this.advance();
@@ -53,9 +58,19 @@ class PlacementController {
     if (this.left.isHuman && this.right.isHuman) {
       this.boardView.block(0);
     }
-    this.boardView.initializeBoard(this.right.board);
+    this.boardView.initializeBoard(
+      this.right.board.id,
+      this.right.board.lb,
+      this.right.board.ub,
+      () => {},
+    );
     this.#doRandomPlacement(this.left.board, () => this.#switchPlacementTurn());
-    this.boardView.indicateTurn(this.left.board, this.right.board);
+    this.boardView.indicateTurn(
+      this.left.board.id,
+      this.left.board.getAllShipCoords(),
+      this.right.board.id,
+      this.right.board.getAllShipCoords(),
+    );
     if (!this.left.isHuman) {
       this.#switchPlacementTurn();
     }
