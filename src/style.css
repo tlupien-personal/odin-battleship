@@ -1,0 +1,149 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.boards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, min(90vw, 500px));
+  gap: 50px;
+  align-items: center;
+  justify-content: center;
+  margin: 5vh 5vw;
+}
+
+.board {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  position: relative;
+  aspect-ratio: 1 / 1;
+}
+
+.attack-border {
+  border: 2px solid teal;
+  box-shadow: 2px 2px 4px teal;
+}
+
+.defense-border {
+  border: 2px solid coral;
+  box-shadow: 2px 2px 4px coral;
+}
+
+.square {
+  border-top: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.square.first-col {
+  border-left: 1px solid black;
+}
+
+.square.last-row {
+  border-bottom: 1px solid black;
+}
+
+.ship {
+  background-color: grey;
+}
+
+.miss {
+  background-color: lavender;
+}
+
+.hit {
+  background-color: coral;
+}
+
+.sunk {
+  background-color: teal;
+}
+
+.board-overlay {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  border: 1px solid black;
+  z-index: 2;
+}
+
+.board form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  padding: 50px;
+}
+
+.ready-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+form div {
+  display: grid;
+  grid-template-columns: 13ch 1.2em;
+  gap: 25px;
+}
+
+button {
+  padding: 5px 15px;
+  align-self: flex-end;
+  border-radius: 5px;
+  border: none;
+  opacity: 0.8;
+  background-color: teal;
+  color: white;
+}
+
+button:hover {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.fade-game .square {
+  opacity: 0.15;
+}
+
+.end-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  background-color: rgba(0 0 0 / 0.05);
+}
+
+.end-card p {
+  font-size: 3em;
+}
+
+.end-card div {
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+}
+
+.block {
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+#randomize-btn {
+  position: absolute;
+  bottom: -45px;
+  left: 0px;
+}
+
+#ready-btn {
+  position: absolute;
+  bottom: -45px;
+  right: 0px;
+}

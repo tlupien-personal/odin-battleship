@@ -1,0 +1,36 @@
+{
+  "name": "odin-battleship",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack serve",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tlupien-personal/odin-battleship.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/tlupien-personal/odin-battleship/issues"
+  },
+  "homepage": "https://github.com/tlupien-personal/odin-battleship#readme",
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.2",
+    "@types/jest": "^30.0.0",
+    "babel-jest": "^30.3.0",
+    "css-loader": "^7.1.4",
+    "html-webpack-plugin": "^5.6.6",
+    "jest": "^30.3.0",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.106.2",
+    "webpack-cli": "^7.0.2",
+    "webpack-dev-server": "^5.2.3"
+  }
+}
