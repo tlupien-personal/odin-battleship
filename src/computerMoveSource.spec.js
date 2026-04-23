@@ -237,6 +237,7 @@ describe("ComputerMoveSource", () => {
       expect(R[1]).toBe(5);
       expect(mockRandom).toHaveBeenCalledTimes(3);
     });
+
     test("Turns around upon encountering a filled square", () => {
       const T = new ComputerMoveSource("random", true, mockRandom);
       applyMockRandom([[0.55, 0.55], 0, 0.33, 0.66, 0.99], 0);
@@ -274,6 +275,45 @@ describe("ComputerMoveSource", () => {
       expect(R[0]).toBe(0);
       expect(R[1]).toBe(2);
       expect(mockRandom).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe("generateMove - randomCheckerboard", () => {
+    test("Works immediately on squares in pattern", () => {
+      const T = new ComputerMoveSource("randomCheckerboard", false, mockRandom);
+      applyMockRandom([
+        [0, 0],
+        [0.11, 0.11],
+        [0, 0.22],
+      ]);
+      mockBoard.getSquareInfo.mockReturnValue(null);
+      let M = T.generateMove(mockBoard);
+      expect(M[0]).toBe(0);
+      expect(M[1]).toBe(0);
+      M = T.generateMove(mockBoard);
+      expect(M[0]).toBe(1);
+      expect(M[1]).toBe(1);
+      M = T.generateMove(mockBoard);
+      expect(M[0]).toBe(0);
+      expect(M[1]).toBe(2);
+    });
+
+    test("Retries for squares outside pattern", () => {
+      const T = new ComputerMoveSource("randomCheckerboard", false, mockRandom);
+      applyMockRandom([
+        [0, 0],
+        [0, 0.11],
+        [0.11, 0],
+        [0.11, 0.11],
+      ]);
+      mockBoard.getSquareInfo.mockReturnValue(null);
+      let M = T.generateMove(mockBoard);
+      expect(M[0]).toBe(0);
+      expect(M[1]).toBe(0);
+      M = T.generateMove(mockBoard);
+      expect(M[0]).toBe(1);
+      expect(M[1]).toBe(1);
+      expect(mockRandom).toHaveBeenCalledTimes(8);
     });
   });
 });

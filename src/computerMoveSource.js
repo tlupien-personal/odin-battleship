@@ -63,28 +63,46 @@ class ComputerMoveSource {
       this.#dump();
       throw new Error("All strategic moves blocked");
     }
-    while (true) {
+    let success = false;
+    let safety = 0;
+    while (!success) {
+      safety++;
       const temp = Math.floor(this.random() * 4);
       if (!this.badDirections.has(temp)) {
         this.restageDirection = temp;
-        break;
+        success = true;
+      }
+      if (safety > 50) {
+        this.#dump();
+        throw new Error("This should never happen™");
       }
     }
-    this.badDirections.has(this.restageDirection);
   }
 
   #flipRestageDirection() {
     if (this.restageDirection === 0) {
       this.restageDirection = 2;
+      this.badDirections.delete(2);
     } else if (this.restageDirection === 1) {
       this.restageDirection = 3;
+      this.badDirections.delete(3);
     } else if (this.restageDirection === 2) {
       this.restageDirection = 0;
+      this.badDirections.delete(0);
     } else if (this.restageDirection === 3) {
       this.restageDirection = 1;
+      this.badDirections.delete(1);
     } else {
       throw new Error(`Improper restage direction (${this.restageDirection})`);
     }
+  }
+
+  #turnAroundAndRedoMoves(board) {
+    const firstHitIdx = this.resultHistory.findIndex((r) => r === "hit");
+    const move = this.moveHistory.at(firstHitIdx);
+    const adjacentMoves = this.#generateAdjacentMoves(move, board.lb, board.ub);
+    this.#flipRestageDirection();
+    return adjacentMoves;
   }
 
   #restageMove(board) {
@@ -97,13 +115,13 @@ class ComputerMoveSource {
       previousHits > 1 &&
       (this.resultHistory.at(-1) === "miss" || this.isRetry)
     ) {
-      const firstHitIdx = this.resultHistory.findIndex((r) => r === "hit");
-      const move = this.moveHistory.at(firstHitIdx);
-      adjacentMoves = this.#generateAdjacentMoves(move, board.lb, board.ub);
-      this.#flipRestageDirection();
+      adjacentMoves = this.#turnAroundAndRedoMoves(board);
     } else if (previousHits > 1) {
       const move = this.moveHistory.at(-1);
       adjacentMoves = this.#generateAdjacentMoves(move, board.lb, board.ub);
+      if (this.badDirections.has(this.restageDirection)) {
+        adjacentMoves = this.#turnAroundAndRedoMoves(board);
+      }
     } else {
       const lastHitIdx = this.resultHistory.findLastIndex((r) => r === "hit");
       const move = this.moveHistory.at(lastHitIdx);
