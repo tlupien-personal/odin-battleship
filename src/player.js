@@ -1,11 +1,11 @@
 import { ComputerMoveSource } from "./computerMoveSource.js";
 
 class Player {
-  constructor(board, isHuman = true, computerStrategy) {
+  constructor(board, isHuman = true, strategy, knowsRestage) {
     this.board = board;
     this.isHuman = isHuman;
     if (!this.isHuman) {
-      this.computer = new ComputerMoveSource("randomCheckerboard", true); // temp, param pls
+      this.computer = new ComputerMoveSource(strategy, knowsRestage);
     }
   }
 

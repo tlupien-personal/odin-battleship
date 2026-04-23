@@ -28,6 +28,9 @@ class ComputerMoveSource {
   }
 
   #restageMeta() {
+    if (!this.knowsRestage) {
+      return;
+    }
     const previousResult = this.resultHistory.at(-1);
     if (previousResult === "hit") {
       this.moveType = "restage";

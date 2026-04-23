@@ -71,7 +71,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 25px;
+  gap: 15px;
   padding: 50px;
 }
 
@@ -82,15 +82,24 @@ body {
   font-size: 2rem;
 }
 
-form div {
+.checkbox-row {
   display: grid;
   grid-template-columns: 13ch 1.2em;
   gap: 25px;
 }
 
+.select-row {
+  display: none;
+}
+
+form:has(.checkbox-row input:checked) .select-row {
+  display: grid;
+  grid-template-columns: calc(13ch + 1.2em + 25px);
+  grid-template-rows: repeat(2, 1.5em);
+}
+
 button {
   padding: 5px 15px;
-  align-self: flex-end;
   border-radius: 5px;
   border: none;
   opacity: 0.8;
