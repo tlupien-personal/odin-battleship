@@ -63,7 +63,6 @@ class ComputerMoveSource {
       throw new Error("All strategic moves blocked");
     }
     while (true) {
-      c++;
       const temp = Math.floor(this.random() * 4);
       if (!this.badDirections.has(temp)) {
         this.restageDirection = temp;
@@ -94,10 +93,7 @@ class ComputerMoveSource {
       0,
     );
     if (previousHits > 1 && this.resultHistory.at(-1) === "miss") {
-      const firstHitIdx =
-        -1 *
-        (this.resultHistory.length -
-          this.resultHistory.findIndex((r) => r === "hit"));
+      const firstHitIdx = this.resultHistory.findIndex((r) => r === "hit");
       const move = this.moveHistory.at(firstHitIdx);
       adjacentMoves = this.#generateAdjacentMoves(move, board.lb, board.ub);
       this.#flipRestageDirection();
@@ -105,10 +101,7 @@ class ComputerMoveSource {
       const move = this.moveHistory.at(-1);
       adjacentMoves = this.#generateAdjacentMoves(move, board.lb, board.ub);
     } else {
-      const lastHitIdx =
-        -1 *
-        (this.resultHistory.length -
-          this.resultHistory.findLastIndex((r) => r === "hit"));
+      const lastHitIdx = this.resultHistory.findLastIndex((r) => r === "hit");
       const move = this.moveHistory.at(lastHitIdx);
       adjacentMoves = this.#generateAdjacentMoves(move, board.lb, board.ub);
       this.#pickRestageDirection();
