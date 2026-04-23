@@ -55,6 +55,8 @@ class PlacementController {
   }
 
   takeOverDisplay() {
+    this.left.reset();
+    this.right.reset();
     if (this.left.isHuman && this.right.isHuman) {
       this.boardView.block(0);
     }
