@@ -117,7 +117,7 @@ describe("ComputerMoveSource", () => {
       expect(R[1]).toBe(2);
     });
 
-    test("Picks random direction after first hit and until second hit", () => {
+    test("Picks random direction after first hit and until second hit - worst case", () => {
       const T = new ComputerMoveSource("random", true, mockRandom);
       applyMockRandom([[0.55, 0.55], 0, 0.33, 0.66, 0.99], 0);
       applyMockBoard(["hit", "miss", "miss", "miss", "hit"], null, true);
@@ -139,6 +139,141 @@ describe("ComputerMoveSource", () => {
       T.generateMove(mockBoard);
       // the point being that in the last move, it was NOT random
       expect(mockRandom).toHaveBeenCalledTimes(6);
+    });
+
+    test("Picks random direction after first hit and until second hit - best case", () => {
+      const T = new ComputerMoveSource("random", true, mockRandom);
+      applyMockRandom([[0.55, 0.55], 0, 0.33, 0.66, 0.99], 0);
+      applyMockBoard(["hit", "hit"], null, true);
+      let R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(5);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(4);
+      expect(R[1]).toBe(5);
+      T.generateMove(mockBoard);
+      expect(mockRandom).toHaveBeenCalledTimes(3);
+    });
+
+    test("Picks random direction after first hit and until second hit - avg case", () => {
+      const T = new ComputerMoveSource("random", true, mockRandom);
+      applyMockRandom([[0.55, 0.55], 0, 0.33, 0.66, 0.99], 0);
+      applyMockBoard(["hit", "miss", "hit"], null, true);
+      let R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(5);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(4);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(5);
+      expect(R[1]).toBe(6);
+      T.generateMove(mockBoard);
+      expect(mockRandom).toHaveBeenCalledTimes(4);
+    });
+
+    test("Keeps going after 2nd hit - immediate", () => {
+      const T = new ComputerMoveSource("random", true, mockRandom);
+      applyMockRandom([[0.55, 0.55], 0, 0.33, 0.66, 0.99], 0);
+      applyMockBoard(["hit", "hit", "hit"], null, true);
+      let R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(5);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(4);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(3);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(2);
+      expect(R[1]).toBe(5);
+      expect(mockRandom).toHaveBeenCalledTimes(3);
+    });
+
+    test("Keeps going after 2nd hit - gap", () => {
+      const T = new ComputerMoveSource("random", true, mockRandom);
+      applyMockRandom([[0.55, 0.55], 0, 0.33, 0.66, 0.99], 0);
+      applyMockBoard(["hit", "miss", "miss", "hit", "hit"], null, true);
+      let R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(5);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(4);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(5);
+      expect(R[1]).toBe(6);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(6);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(7);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(8);
+      expect(R[1]).toBe(5);
+      expect(mockRandom).toHaveBeenCalledTimes(5);
+    });
+
+    test("Turns around relative to the original hit after a miss but no sunk", () => {
+      const T = new ComputerMoveSource("random", true, mockRandom);
+      applyMockRandom([[0.55, 0.55], 0, 0.33, 0.66, 0.99], 0);
+      applyMockBoard(["hit", "hit", "miss", "hit"], null, true);
+      let R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(5);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(4);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(3);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(6);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(7);
+      expect(R[1]).toBe(5);
+      expect(mockRandom).toHaveBeenCalledTimes(3);
+    });
+    test("Turns around upon encountering a filled square", () => {
+      const T = new ComputerMoveSource("random", true, mockRandom);
+      applyMockRandom([[0.55, 0.55], 0, 0.33, 0.66, 0.99], 0);
+      applyMockBoard(
+        [null, "hit", null, "hit", "miss", null, "hit"],
+        null,
+        false,
+      );
+      let R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(5);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(4);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(6);
+      expect(R[1]).toBe(5);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(7);
+      expect(R[1]).toBe(5);
+      expect(mockRandom).toHaveBeenCalledTimes(3);
+    });
+
+    test("Turns around upon going out of bounds", () => {
+      const T = new ComputerMoveSource("random", true, mockRandom);
+      applyMockRandom([[0, 0.11], 0.99], 0);
+      applyMockBoard(["hit", "hit", "hit"], null, true);
+      let R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(0);
+      expect(R[1]).toBe(1);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(0);
+      expect(R[1]).toBe(0);
+      R = T.generateMove(mockBoard);
+      expect(R[0]).toBe(0);
+      expect(R[1]).toBe(2);
+      expect(mockRandom).toHaveBeenCalledTimes(3);
     });
   });
 });

@@ -9,6 +9,7 @@ class ComputerMoveSource {
     // 0 = up, 1 = right, 2 = down, 3 = left
     this.restageDirection = 0;
     this.badDirections = new Set();
+    this.isRetry = false;
   }
 
   #dump() {
@@ -92,7 +93,10 @@ class ComputerMoveSource {
       (p, c) => (c === "hit" ? ++p : p),
       0,
     );
-    if (previousHits > 1 && this.resultHistory.at(-1) === "miss") {
+    if (
+      previousHits > 1 &&
+      (this.resultHistory.at(-1) === "miss" || this.isRetry)
+    ) {
       const firstHitIdx = this.resultHistory.findIndex((r) => r === "hit");
       const move = this.moveHistory.at(firstHitIdx);
       adjacentMoves = this.#generateAdjacentMoves(move, board.lb, board.ub);
@@ -109,17 +113,41 @@ class ComputerMoveSource {
     return adjacentMoves[this.restageDirection];
   }
 
+  #randomCheckerboardMove(board) {
+    let success = false;
+    let move;
+    while (!success) {
+      move = [
+        Math.floor(this.random() * (board.ub + 1)),
+        Math.floor(this.random() * (board.ub + 1)),
+      ];
+      if (
+        (move[0] % 2 === 0 && move[1] % 2 === 0) ||
+        (move[0] % 2 !== 0 && move[1] % 2 !== 0)
+      ) {
+        success = true;
+      }
+    }
+    return move;
+  }
+
   generateMove(board) {
+    this.isRetry = false;
     if (this.moveHistory.length > 0) {
       this.resultHistory.push(board.getSquareInfo(...this.moveHistory.at(-1)));
       this.#restageMeta();
     }
     let success = false;
     let move;
+    let safety = 0;
     while (!success) {
+      safety++;
       switch (this.moveType) {
         case "random":
           move = this.#randomMove(board);
+          break;
+        case "randomCheckerboard":
+          move = this.#randomCheckerboardMove(board);
           break;
         case "restage":
           move = this.#restageMove(board);
@@ -131,6 +159,12 @@ class ComputerMoveSource {
       const squareInfo = board.getSquareInfo(move[0], move[1]);
       if (squareInfo == null) {
         success = true;
+      } else {
+        this.isRetry = true;
+      }
+      if (safety > 200) {
+        this.#dump();
+        throw new Error("This should never happen™");
       }
     }
     this.moveHistory.push(move);

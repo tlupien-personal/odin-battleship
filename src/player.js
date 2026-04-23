@@ -5,7 +5,7 @@ class Player {
     this.board = board;
     this.isHuman = isHuman;
     if (!this.isHuman) {
-      this.computer = new ComputerMoveSource(computerStrategy, true); // temp, param pls
+      this.computer = new ComputerMoveSource("randomCheckerboard", true); // temp, param pls
     }
   }
 
