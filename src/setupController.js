@@ -48,7 +48,6 @@ class SetupController {
     const board = new GameBoard(formConfig.boardId);
     const isHuman = !data.isComputer;
     let computerStrategy;
-    console.log(data.computerDifficulty);
     switch (+data.computerDifficulty) {
       case 1:
         computerStrategy = ["random", false];
@@ -57,13 +56,12 @@ class SetupController {
         computerStrategy = ["random", true];
         break;
       case 3:
-        computerStrategy = ["randomCheckerBoard", true];
+        computerStrategy = ["randomCheckerboard", true];
         break;
       default:
         computerStrategy = ["random", true];
         break;
     }
-    console.log(computerStrategy);
     const player = new Player(board, isHuman, ...computerStrategy);
     this.players[formConfig.playerId] = player;
     this.view.hideForm(formConfig.boardId);

@@ -67,6 +67,7 @@ class PlacementController {
       () => {},
     );
     this.#doRandomPlacement(this.left.board, () => this.#switchPlacementTurn());
+    this.boardView.flipTextLocation = false;
     this.boardView.indicateTurn(
       this.left.board.id,
       this.left.board.getAllShipCoords(),

@@ -83,13 +83,18 @@ class BoardView {
       block.classList.add("block");
       block.addEventListener("click", () => this.unblock());
 
-      const p1 = document.createElement("p");
-      p1.innerText = "Click to Show";
-      block.appendChild(p1);
-
-      const p2 = document.createElement("p");
-      p2.innerText = "Only Green May Look";
-      block.appendChild(p2);
+      if (
+        board.classList.contains(
+          this.flipTextLocation ? "defense-border" : "attack-border",
+        )
+      ) {
+        const p1 = document.createElement("p");
+        const p2 = document.createElement("p");
+        p1.innerText = "Only Green May Look";
+        p2.innerText = "Click to Show";
+        block.appendChild(p1);
+        block.appendChild(p2);
+      }
 
       board.appendChild(block);
     });
