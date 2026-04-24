@@ -12,29 +12,69 @@ class SetupController {
     this.players = {};
   }
 
-  #handleForm(e, id) {
+  #createFormConfig(playerId) {
+    return {
+      playerId,
+      formId: playerId + "-form",
+      boardId: playerId + "-board",
+      fields: [
+        {
+          label: "Computer?",
+          name: "isComputer",
+          id: playerId + "-isComputer",
+          type: "checkbox",
+        },
+        {
+          label: "Computer Difficulty",
+          name: "computerDifficulty",
+          id: playerId + "computerDifficulty",
+          type: "select",
+          options: [
+            { value: 1, text: "Easy" },
+            { value: 2, text: "Medium" },
+            { value: 3, text: "Hard" },
+          ],
+        },
+      ],
+      submit: (e, formConfig) => this.#handleForm(e, formConfig),
+    };
+  }
+
+  #handleForm(e, formConfig) {
     e.preventDefault();
-    const form = document.querySelector("#" + id + "-form");
+    const form = document.querySelector("#" + formConfig.formId);
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
-    const board = new GameBoard(id + "-board");
-    let isHuman;
-    if (data.isHuman) {
-      isHuman = true;
-    } else {
-      isHuman = false;
+    const board = new GameBoard(formConfig.boardId);
+    const isHuman = !data.isComputer;
+    let computerStrategy;
+    switch (+data.computerDifficulty) {
+      case 1:
+        computerStrategy = ["random", false];
+        break;
+      case 2:
+        computerStrategy = ["random", true];
+        break;
+      case 3:
+        computerStrategy = ["randomCheckerboard", true];
+        break;
+      default:
+        computerStrategy = ["random", true];
+        break;
     }
-    const player = new Player(board, isHuman, data.computerStrategy);
-    this.players[id] = player;
-    this.view.hideForm(id);
+    const player = new Player(board, isHuman, ...computerStrategy);
+    this.players[formConfig.playerId] = player;
+    this.view.hideForm(formConfig.boardId);
     if (Object.entries(this.players).length == 2) {
       this.advance();
     }
   }
 
   takeOverDisplay() {
-    this.view.showForm("left");
-    this.view.showForm("right");
+    const leftConfig = this.#createFormConfig("left");
+    this.view.showForm(leftConfig);
+    const rightConfig = this.#createFormConfig("right");
+    this.view.showForm(rightConfig);
   }
 }
 

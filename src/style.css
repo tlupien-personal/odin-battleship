@@ -3,29 +3,30 @@ body {
 }
 
 .boards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, min(90vw, 500px));
-  gap: 50px;
+  min-width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  margin: 5vh 5vw;
+  gap: 50px;
+  padding: 5vh 5vw;
 }
 
 .board {
-  width: 100%;
-  height: 100%;
+  flex: 0 1 500px;
+  aspect-ratio: 1 / 1;
   display: grid;
   position: relative;
-  aspect-ratio: 1 / 1;
 }
 
 .attack-border {
-  border: 2px solid teal;
+  border: 3px solid teal;
   box-shadow: 2px 2px 4px teal;
 }
 
 .defense-border {
-  border: 2px solid coral;
+  border: 3px solid coral;
   box-shadow: 2px 2px 4px coral;
 }
 
@@ -71,7 +72,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 25px;
+  gap: 15px;
   padding: 50px;
 }
 
@@ -82,15 +83,24 @@ body {
   font-size: 2rem;
 }
 
-form div {
+.checkbox-row {
   display: grid;
   grid-template-columns: 13ch 1.2em;
   gap: 25px;
 }
 
+.select-row {
+  display: none;
+}
+
+form:has(.checkbox-row input:checked) .select-row {
+  display: grid;
+  grid-template-columns: calc(13ch + 1.2em + 25px);
+  grid-template-rows: repeat(2, 1.5em);
+}
+
 button {
   padding: 5px 15px;
-  align-self: flex-end;
   border-radius: 5px;
   border: none;
   opacity: 0.8;
@@ -104,7 +114,7 @@ button:hover {
 }
 
 .fade-game .square {
-  opacity: 0.15;
+  opacity: 0.25;
 }
 
 .end-card {
@@ -117,7 +127,7 @@ button:hover {
 }
 
 .end-card p {
-  font-size: 3em;
+  font-size: clamp(2rem, 2rem + 1vw, 3rem);
 }
 
 .end-card div {
@@ -133,7 +143,11 @@ button:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+}
+
+.block p {
+  text-align: center;
+  font-size: clamp(1.5rem, 1.5rem + 1vw, 2.5rem);
 }
 
 #randomize-btn {

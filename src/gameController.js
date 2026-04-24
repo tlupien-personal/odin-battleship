@@ -26,7 +26,7 @@ class GameController {
     if (this.attacker.isHuman && this.defender.isHuman) {
       this.defender = null;
       this.attacker = null;
-      await this.boardView.block(2000); // temp
+      await this.boardView.block(1500); // temp
     }
     this.defender = newDefender;
     this.attacker = newAttacker;
@@ -93,7 +93,7 @@ class GameController {
     this.#passTurn();
   }
 
-  takeOverDisplay() {
+  async takeOverDisplay() {
     this.boardView.initializeBoard(
       this.attacker.board.id,
       this.attacker.board.lb,
@@ -106,15 +106,16 @@ class GameController {
       this.defender.board.ub,
       (e) => this.doHumanTurn(e),
     );
-    if (this.attacker.isHuman && this.defender.isHuman) {
-      this.boardView.block(0);
-    }
     this.boardView.indicateTurn(
       this.attacker.board.id,
       this.attacker.board.getAllShipCoords(),
       this.defender.board.id,
       this.defender.board.getAllShipCoords(),
     );
+    if (this.attacker.isHuman && this.defender.isHuman) {
+      await this.boardView.block(0);
+    }
+    this.boardView.flipTextLocation = true;
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
     }

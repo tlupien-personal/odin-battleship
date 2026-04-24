@@ -1,49 +1,81 @@
 class SetupView {
-  constructor({ leftCallback, rightCallback }) {
-    this.leftCallback = leftCallback;
-    this.rightCallback = rightCallback;
+  #createLabel(config) {
+    const label = document.createElement("label");
+    label.innerText = config.label;
+    label.setAttribute("for", config.id);
+    return label;
   }
 
-  #createForm(id) {
-    const form = document.createElement("form");
-    form.id = id + "-form";
-    form.classList.add("board-overlay");
-
-    const label = document.createElement("label");
-    label.setAttribute("for", "isHuman");
-    label.innerText = "Human Player?";
-
-    const input = document.createElement("input");
-    input.id = id + "isHuman";
-    input.setAttribute("type", "checkbox");
-    input.setAttribute("name", "isHuman");
-    // add event listener to show computer strategy dropdown
-
+  #createInput(config) {
     const row = document.createElement("div");
+    row.classList.add(`${config.type}-row`);
+    const input = document.createElement("input");
+    const label = this.#createLabel(config);
+
+    input.id = config.id;
+    input.setAttribute("type", config.type);
+    input.setAttribute("name", config.name);
+
     row.appendChild(label);
     row.appendChild(input);
+    return row;
+  }
 
-    form.appendChild(row);
+  #createDropdown(config) {
+    const row = document.createElement("div");
+    row.classList.add(`${config.type}-row`);
+    const label = this.#createLabel(config);
+    const select = document.createElement("select");
+
+    select.id = config.id;
+    select.setAttribute("name", config.name);
+
+    for (const optionConfig of config.options) {
+      const option = document.createElement("option");
+      option.setAttribute("value", optionConfig.value);
+      option.innerText = optionConfig.text;
+      select.appendChild(option);
+    }
+
+    row.appendChild(label);
+    row.appendChild(select);
+    return row;
+  }
+
+  #createForm(formConfig) {
+    const form = document.createElement("form");
+    form.id = formConfig.formId;
+    form.classList.add("board-overlay");
+
+    for (const field of formConfig.fields) {
+      if (field.type === "select") {
+        const row = this.#createDropdown(field);
+        form.appendChild(row);
+      } else {
+        const row = this.#createInput(field);
+        form.appendChild(row);
+      }
+    }
 
     const button = document.createElement("button");
     button.innerText = "Ready";
-    button.addEventListener("click", (e) => this[id + "Callback"](e));
+    button.addEventListener("click", (e) => formConfig.submit(e, formConfig));
     form.appendChild(button);
 
     return form;
   }
 
-  showForm(id) {
-    const container = document.querySelector("#" + id + "-board");
+  showForm(formConfig) {
+    const container = document.querySelector("#" + formConfig.boardId);
     container.innerText = "";
     container.classList.remove("attack-border");
     container.classList.remove("defense-border");
-    const form = this.#createForm(id);
+    const form = this.#createForm(formConfig);
     container.appendChild(form);
   }
 
-  hideForm(id) {
-    const container = document.querySelector("#" + id + "-board");
+  hideForm(boardId) {
+    const container = document.querySelector("#" + boardId);
     container.innerText = "";
     const p = document.createElement("p");
     p.classList.add("ready-msg");

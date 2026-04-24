@@ -55,6 +55,8 @@ class PlacementController {
   }
 
   takeOverDisplay() {
+    this.left.reset();
+    this.right.reset();
     if (this.left.isHuman && this.right.isHuman) {
       this.boardView.block(0);
     }
@@ -65,6 +67,7 @@ class PlacementController {
       () => {},
     );
     this.#doRandomPlacement(this.left.board, () => this.#switchPlacementTurn());
+    this.boardView.flipTextLocation = false;
     this.boardView.indicateTurn(
       this.left.board.id,
       this.left.board.getAllShipCoords(),

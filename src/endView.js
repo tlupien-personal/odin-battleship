@@ -8,7 +8,7 @@ class EndView {
     const card = document.createElement("div");
 
     const msg = document.createElement("p");
-    msg.innerText = "You Win!";
+    msg.innerText = "Victory";
 
     const rematchButton = document.createElement("button");
     rematchButton.addEventListener("click", (e) => this.rematch(e));
@@ -31,7 +31,7 @@ class EndView {
   #createLossMsg() {
     const card = document.createElement("div");
     const msg = document.createElement("p");
-    msg.innerText = "You Lose";
+    msg.innerText = "All Ships Sunk";
     card.appendChild(msg);
     return card;
   }

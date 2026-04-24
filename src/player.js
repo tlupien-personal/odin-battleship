@@ -1,11 +1,11 @@
 import { ComputerMoveSource } from "./computerMoveSource.js";
 
 class Player {
-  constructor(board, isHuman = true, computerStrategy) {
+  constructor(board, isHuman = true, strategy, knowsRestage) {
     this.board = board;
     this.isHuman = isHuman;
     if (!this.isHuman) {
-      this.computer = new ComputerMoveSource(computerStrategy);
+      this.computer = new ComputerMoveSource(strategy, knowsRestage);
     }
   }
 
@@ -25,13 +25,19 @@ class Player {
     if (!this.computer) {
       throw new Error("Tried to do computer move without computer");
     }
-    let computerMoveResult = false;
-    let move;
-    while (!computerMoveResult) {
-      move = this.computer.generateMove(other.board);
-      computerMoveResult = this.sendAttack(other, move[0], move[1]);
-    }
+    const move = this.computer.generateMove(other.board);
+    this.sendAttack(other, move[0], move[1]);
     return move;
+  }
+
+  reset() {
+    if (!this.isHuman) {
+      const newComputer = new ComputerMoveSource(
+        this.computer.strategy,
+        this.computer.knowsRestage,
+      );
+      this.computer = newComputer;
+    }
   }
 }
 
