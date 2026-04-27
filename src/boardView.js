@@ -6,10 +6,24 @@ class BoardView {
     return square;
   }
 
-  initializeBoard(boardId, lb, ub, turnFunction) {
+  setSquareCallback(boardId, event, callback) {
     const board = document.querySelector("#" + boardId);
-    board.innerText = "";
-    board.classList.remove("fade-game");
+    board.addEventListener(event, (e) => {
+      const square = e.target;
+      const squareBoardId = square.getAttribute("data-board-id");
+      const row = square.getAttribute("data-row");
+      const col = square.getAttribute("data-col");
+      if (squareBoardId == null || row == null || col == null) {
+        return;
+      }
+      callback(squareBoardId, row, col);
+    });
+  }
+
+  initializeBoard(boardId, lb, ub) {
+    const oldBoard = document.querySelector("#" + boardId);
+    const board = oldBoard.cloneNode();
+    oldBoard.replaceWith(board);
     board.style.gridTemplateColumns = `repeat(${ub + 1}, 1fr)`;
     board.style.gridTemplateRows = `repeat(${ub + 1}, 1fr)`;
     for (let i = lb; i <= ub; i++) {
@@ -25,7 +39,6 @@ class BoardView {
         square.setAttribute("data-row", i);
         square.setAttribute("data-col", j);
         square.setAttribute("data-board-id", boardId);
-        square.addEventListener("click", turnFunction);
         board.appendChild(square);
       }
     }
@@ -55,6 +68,11 @@ class BoardView {
   fade() {
     const boards = document.querySelectorAll(".board");
     boards.forEach((board) => board.classList.add("fade-game"));
+  }
+
+  unfade() {
+    const boards = document.querySelectorAll(".board");
+    boards.forEach((board) => board.classList.remove("fade-game"));
   }
 
   indicateTurn(
@@ -103,6 +121,16 @@ class BoardView {
   unblock() {
     const blocks = document.querySelectorAll(".block");
     blocks.forEach((block) => block.remove());
+  }
+
+  turnOnDragCursor(boardId) {
+    const board = document.querySelector("#" + boardId);
+    board.style.cursor = "grabbing";
+  }
+
+  turnOffDragCursor(boardId) {
+    const board = document.querySelector("#" + boardId);
+    board.style.cursor = "auto";
   }
 }
 

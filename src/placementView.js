@@ -1,7 +1,10 @@
 class PlacementView {
   #createButton(name, callback) {
     const button = document.createElement("button");
-    button.addEventListener("click", (e) => callback(e));
+    button.addEventListener("click", (e) => {
+      e.stopPropagation();
+      callback(e);
+    });
     button.innerText = name;
     button.id = name.toLowerCase() + "-btn";
     return button;
