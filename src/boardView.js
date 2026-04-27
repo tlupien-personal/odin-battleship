@@ -1,4 +1,8 @@
 class BoardView {
+  #getBoard(boardId) {
+    return document.querySelector("#" + boardId);
+  }
+
   #findSquare(boardId, row, col) {
     const square = document.querySelector(
       `#${boardId} .square[data-row="${row}"][data-col="${col}"]`,
@@ -7,7 +11,7 @@ class BoardView {
   }
 
   setSquareCallback(boardId, event, callback) {
-    const board = document.querySelector("#" + boardId);
+    const board = this.#getBoard(boardId);
     board.addEventListener(event, (e) => {
       const square = e.target;
       const squareBoardId = square.getAttribute("data-board-id");
@@ -21,7 +25,7 @@ class BoardView {
   }
 
   initializeBoard(boardId, lb, ub) {
-    const oldBoard = document.querySelector("#" + boardId);
+    const oldBoard = this.#getBoard(boardId);
     const board = oldBoard.cloneNode();
     oldBoard.replaceWith(board);
     board.style.gridTemplateColumns = `repeat(${ub + 1}, 1fr)`;
@@ -52,7 +56,9 @@ class BoardView {
   }
 
   hideShips(boardId) {
-    const shipSquares = document.querySelectorAll("#" + boardId + " .ship");
+    const shipSquares = document.querySelectorAll(
+      `#${boardId} .ship, #${boardId} .current-ship`,
+    );
     shipSquares.forEach((square) => {
       square.classList.remove("ship");
     });
@@ -81,8 +87,8 @@ class BoardView {
   }
 
   indicateTurn(attackerBoardId, attackerShipCoords, defenderBoardId) {
-    const attackerBoard = document.querySelector("#" + attackerBoardId);
-    const defenderBoard = document.querySelector("#" + defenderBoardId);
+    const attackerBoard = this.#getBoard(attackerBoardId);
+    const defenderBoard = this.#getBoard(defenderBoardId);
     this.showShips(attackerBoardId, attackerShipCoords);
     this.hideShips(defenderBoardId);
     attackerBoard.classList.add("attack-border");
@@ -124,19 +130,39 @@ class BoardView {
   }
 
   turnOnDragCursor(boardId) {
-    const board = document.querySelector("#" + boardId);
+    const board = this.#getBoard(boardId);
     board.style.cursor = "grabbing";
   }
 
   turnOffDragCursor(boardId) {
-    const board = document.querySelector("#" + boardId);
+    const board = this.#getBoard(boardId);
     board.style.cursor = "auto";
   }
 
-  resetSquaresByClasses(displayClasses) {
-    for (const c of displayClasses) {
-      const squares = document.querySelectorAll("." + c);
-      squares.forEach((square) => square.classList.remove(c));
+  showTraceShip(boardId, coords, isValid) {
+    for (const displayClass of ["hit", "sunk"]) {
+      const squares = document.querySelectorAll("." + displayClass);
+      squares.forEach((square) => square.classList.remove(displayClass));
+    }
+    for (const c of coords) {
+      if (isValid) {
+        this.updateSquare(boardId, c[0], c[1], "sunk");
+      } else {
+        this.updateSquare(boardId, c[0], c[1], "hit");
+      }
+    }
+  }
+
+  showGhostShip(boardId, coords) {
+    for (const c of coords) {
+      this.updateSquare(boardId, c[0], c[1], "current-ship");
+    }
+  }
+
+  hideHelperShips() {
+    for (const displayClass of ["hit", "sunk", "current-ship"]) {
+      const squares = document.querySelectorAll("." + displayClass);
+      squares.forEach((square) => square.classList.remove(displayClass));
     }
   }
 }

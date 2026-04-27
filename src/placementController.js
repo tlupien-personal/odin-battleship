@@ -54,9 +54,7 @@ class PlacementController {
     }
     const shipHead = this.currentShip.getCoords()[0];
     const shipVertical = this.currentShip.isVertical;
-    this.currentShip.getCoords().forEach((c) => {
-      this.boardView.updateSquare(boardId, c[0], c[1], "current-ship");
-    });
+    this.boardView.showGhostShip(boardId, this.currentShip.getCoords());
     if (shipVertical) {
       this.shipOffset = row - shipHead[0];
     } else {
@@ -86,16 +84,12 @@ class PlacementController {
       ...coord,
       this.currentShip,
     );
-    const displayClass = isValid ? "sunk" : "hit";
     const fakeShip = new Ship(
       this.currentShip.length,
       this.currentShip.isVertical,
     );
     fakeShip.place(...coord);
-    this.boardView.resetSquaresByClasses(["sunk", "hit"]);
-    for (const c of fakeShip.getCoords()) {
-      this.boardView.updateSquare(boardId, c[0], c[1], displayClass);
-    }
+    this.boardView.showTraceShip(boardId, fakeShip.getCoords(), isValid);
   }
 
   #putDownShip(boardId, row, col) {
@@ -118,13 +112,8 @@ class PlacementController {
     }
     this.isDragging = false;
     this.boardView.turnOffDragCursor(boardId);
-    this.boardView.resetSquaresByClasses([
-      "hit",
-      "sunk",
-      "ship",
-      "current-ship",
-    ]);
-    this.boardView.showShips(
+    this.boardView.hideHelperShips();
+    this.boardView.resetShips(
       boardId,
       this.activePlayer.board.getAllShipCoords(),
     );
