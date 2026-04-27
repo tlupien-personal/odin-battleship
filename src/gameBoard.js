@@ -15,7 +15,7 @@ class GameBoard {
     for (let i = -1; i < ship.length + 1; i++) {
       if (ship.isVertical) {
         if (
-          row + i > this.ub ||
+          row + ship.length - 1 > this.ub ||
           this.layout[row + i]?.[col] ||
           this.layout[row + i]?.[col - 1] ||
           this.layout[row + i]?.[col + 1]
@@ -24,7 +24,7 @@ class GameBoard {
         }
       } else {
         if (
-          col + i > this.ub ||
+          col + ship.length - 1 > this.ub ||
           this.layout[row]?.[col + i] ||
           this.layout[row - 1]?.[col + i] ||
           this.layout[row + 1]?.[col + i]
@@ -95,6 +95,23 @@ class GameBoard {
       }
     }
     return result;
+  }
+
+  popShipByCoord(row, col) {
+    for (let i = 0; i < this.ships.length; i++) {
+      const ship = this.ships[i];
+      const coords = ship.getCoords();
+      for (let j = 0; j < coords.length; j++) {
+        if (coords[j][0] === +row && coords[j][1] === +col) {
+          this.ships.splice(i, 1);
+          for (const c of coords) {
+            delete this.layout[c[0]][c[1]];
+          }
+          return ship;
+        }
+      }
+    }
+    return null;
   }
 
   reset() {

@@ -48,28 +48,84 @@ class PlacementController {
   }
 
   #pickUpShip(boardId, row, col) {
-    if (this.activePlayer.board.id !== boardId) {
+    if (this.isDragging || this.activePlayer.board.id !== boardId) {
       return;
     }
+    this.currentShip = this.activePlayer.board.popShipByCoord(row, col);
+    if (!this.currentShip) {
+      return;
+    }
+    const shipHead = this.currentShip.getCoords()[0];
+    const shipVertical = this.currentShip.isVertical;
+    this.currentShip.getCoords().forEach((c) => {
+      this.boardView.updateSquare(boardId, c[0], c[1], "current-ship");
+    });
+    if (shipVertical) {
+      this.shipOffset = row - shipHead[0];
+    } else {
+      this.shipOffset = col - shipHead[1];
+    }
     this.isDragging = true;
-    console.log("pick up ship");
     this.boardView.turnOnDragCursor(boardId);
+  }
+
+  #shipHeadFromOffset(row, col) {
+    if (this.shipOffset == null || this.currentShip == null) {
+      return;
+    }
+    if (this.currentShip.isVertical) {
+      return [row - this.shipOffset, col];
+    } else {
+      return [row, col - this.shipOffset];
+    }
   }
 
   #checkShip(boardId, row, col) {
     if (!this.isDragging || this.activePlayer.board.id !== boardId) {
       return;
     }
-    console.log("check ship");
+    const coord = this.#shipHeadFromOffset(row, col);
+    const isValid = this.activePlayer.board.canPlaceShip(
+      ...coord,
+      this.currentShip,
+    );
+    const displayClass = isValid ? "sunk" : "hit";
+    const fakeShip = new Ship(
+      this.currentShip.length,
+      this.currentShip.isVertical,
+    );
+    fakeShip.place(...coord);
+    this.boardView.resetSquaresByClasses(["sunk", "hit"]);
+    for (const c of fakeShip.getCoords()) {
+      this.boardView.updateSquare(boardId, c[0], c[1], displayClass); // hmmmmmg
+    }
   }
 
   #putDownShip(boardId, row, col) {
     if (!this.isDragging || this.activePlayer.board.id !== boardId) {
       return;
     }
+    const coord = this.#shipHeadFromOffset(row, col);
+    const isValid = this.activePlayer.board.canPlaceShip(
+      ...coord,
+      this.currentShip,
+    );
+    if (isValid) {
+      this.activePlayer.board.placeShip(...coord, this.currentShip);
+    } else {
+      this.activePlayer.board.placeShip(
+        this.currentShip.row,
+        this.currentShip.col,
+        this.currentShip,
+      );
+    }
     this.isDragging = false;
-    console.log("put down ship");
     this.boardView.turnOffDragCursor(boardId);
+    this.boardView.resetSquaresByClasses(["hit", "sunk", "ship", "current-ship"]);
+    this.boardView.showShips(
+      boardId,
+      this.activePlayer.board.getAllShipCoords(),
+    );
   }
 
   #switchPlacementTurn() {

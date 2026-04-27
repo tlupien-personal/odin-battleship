@@ -16,7 +16,7 @@ class BoardView {
       if (squareBoardId == null || row == null || col == null) {
         return;
       }
-      callback(squareBoardId, row, col);
+      callback(squareBoardId, +row, +col);
     });
   }
 
@@ -60,7 +60,7 @@ class BoardView {
 
   updateSquare(boardId, row, col, state) {
     const square = this.#findSquare(boardId, row, col);
-    if (state != null) {
+    if (state != null && square != null) {
       square.classList.add(state);
     }
   }
@@ -131,6 +131,13 @@ class BoardView {
   turnOffDragCursor(boardId) {
     const board = document.querySelector("#" + boardId);
     board.style.cursor = "auto";
+  }
+
+  resetSquaresByClasses(displayClasses) {
+    for (const c of displayClasses) {
+      const squares = document.querySelectorAll("." + c);
+      squares.forEach((square) => square.classList.remove(c));
+    }
   }
 }
 
