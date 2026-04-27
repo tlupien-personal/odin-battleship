@@ -34,7 +34,6 @@ class GameController {
       this.attacker.board.id,
       this.attacker.board.getAllShipCoords(),
       this.defender.board.id,
-      this.defender.board.getAllShipCoords(),
     );
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
@@ -115,7 +114,6 @@ class GameController {
       this.attacker.board.id,
       this.attacker.board.getAllShipCoords(),
       this.defender.board.id,
-      this.defender.board.getAllShipCoords(),
     );
     if (this.attacker.isHuman && this.defender.isHuman) {
       await this.boardView.block(0);

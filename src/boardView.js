@@ -51,11 +51,16 @@ class BoardView {
     }
   }
 
-  hideShips(boardId, coords) {
-    for (const c of coords) {
-      const square = this.#findSquare(boardId, c[0], c[1]);
+  hideShips(boardId) {
+    const shipSquares = document.querySelectorAll("#" + boardId + " .ship");
+    shipSquares.forEach((square) => {
       square.classList.remove("ship");
-    }
+    });
+  }
+
+  resetShips(boardId, coords) {
+    this.hideShips(boardId);
+    this.showShips(boardId, coords);
   }
 
   updateSquare(boardId, row, col, state) {
@@ -75,16 +80,11 @@ class BoardView {
     boards.forEach((board) => board.classList.remove("fade-game"));
   }
 
-  indicateTurn(
-    attackerBoardId,
-    attackerShipCoords,
-    defenderBoardId,
-    defenderShipCoords,
-  ) {
+  indicateTurn(attackerBoardId, attackerShipCoords, defenderBoardId) {
     const attackerBoard = document.querySelector("#" + attackerBoardId);
     const defenderBoard = document.querySelector("#" + defenderBoardId);
     this.showShips(attackerBoardId, attackerShipCoords);
-    this.hideShips(defenderBoardId, defenderShipCoords);
+    this.hideShips(defenderBoardId);
     attackerBoard.classList.add("attack-border");
     attackerBoard.classList.remove("defense-border");
     defenderBoard.classList.add("defense-border");

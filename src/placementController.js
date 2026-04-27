@@ -12,7 +12,7 @@ class PlacementController {
     this.isDragging = false;
   }
 
-  #doRandomPlacement(board, ready) {
+  #doRandomPlacement(board) {
     board.reset();
     for (const l of this.shipLengths) {
       let placed = false;
@@ -29,8 +29,10 @@ class PlacementController {
         }
       }
     }
-    this.boardView.initializeBoard(board.id, board.lb, board.ub);
-    this.boardView.showShips(board.id, board.getAllShipCoords());
+    this.boardView.resetShips(board.id, board.getAllShipCoords());
+  }
+
+  #applyPlacementCallbacks(board) {
     this.boardView.setSquareCallback(board.id, "mousedown", (id, row, col) =>
       this.#pickUpShip(id, row, col),
     );
@@ -39,11 +41,6 @@ class PlacementController {
     );
     this.boardView.setSquareCallback(board.id, "mouseup", (id, row, col) =>
       this.#putDownShip(id, row, col),
-    );
-    this.placementView.addButtons(
-      board.id,
-      () => this.#doRandomPlacement(board, ready),
-      () => ready(),
     );
   }
 
@@ -97,7 +94,7 @@ class PlacementController {
     fakeShip.place(...coord);
     this.boardView.resetSquaresByClasses(["sunk", "hit"]);
     for (const c of fakeShip.getCoords()) {
-      this.boardView.updateSquare(boardId, c[0], c[1], displayClass); // hmmmmmg
+      this.boardView.updateSquare(boardId, c[0], c[1], displayClass);
     }
   }
 
@@ -121,28 +118,40 @@ class PlacementController {
     }
     this.isDragging = false;
     this.boardView.turnOffDragCursor(boardId);
-    this.boardView.resetSquaresByClasses(["hit", "sunk", "ship", "current-ship"]);
+    this.boardView.resetSquaresByClasses([
+      "hit",
+      "sunk",
+      "ship",
+      "current-ship",
+    ]);
     this.boardView.showShips(
       boardId,
       this.activePlayer.board.getAllShipCoords(),
     );
   }
 
+  #activateBoard(board, other, ready) {
+    this.placementView.removeButtons(other.id);
+    this.boardView.initializeBoard(board.id, board.lb, board.ub);
+    this.boardView.initializeBoard(other.id, other.lb, other.ub);
+    this.#doRandomPlacement(board);
+    this.#applyPlacementCallbacks(board);
+    this.placementView.addButtons(
+      board.id,
+      () => this.#doRandomPlacement(board),
+      () => ready(),
+    );
+    this.boardView.indicateTurn(board.id, board.getAllShipCoords(), other.id);
+  }
+
   #switchPlacementTurn() {
     if (this.left.isHuman && this.right.isHuman) {
       this.boardView.block(0);
     }
-    this.placementView.removeButtons(this.left.board.id);
-    this.boardView.indicateTurn(
-      this.right.board.id,
-      this.right.board.getAllShipCoords(),
-      this.left.board.id,
-      this.left.board.getAllShipCoords(),
+    this.#activateBoard(this.right.board, this.left.board, () =>
+      this.advance(),
     );
     this.activePlayer = this.right;
-    this.#doRandomPlacement(this.right.board, () => {
-      this.advance();
-    });
     if (!this.right.isHuman) {
       this.advance();
     }
@@ -151,27 +160,21 @@ class PlacementController {
   takeOverDisplay() {
     this.left.reset();
     this.right.reset();
+
     this.boardView.unfade();
+    this.boardView.flipTextLocation = false;
+
     if (this.left.isHuman && this.right.isHuman) {
       this.boardView.block(0);
     }
-    this.activePlayer = this.left;
-    this.#doRandomPlacement(this.left.board, () => this.#switchPlacementTurn());
-    this.boardView.flipTextLocation = false;
-    this.boardView.indicateTurn(
-      this.left.board.id,
-      this.left.board.getAllShipCoords(),
-      this.right.board.id,
-      this.right.board.getAllShipCoords(),
+
+    this.#activateBoard(this.left.board, this.right.board, () =>
+      this.#switchPlacementTurn(),
     );
+    this.activePlayer = this.left;
+
     if (!this.left.isHuman) {
       this.#switchPlacementTurn();
-    } else {
-      this.boardView.initializeBoard(
-        this.right.board.id,
-        this.right.board.lb,
-        this.right.board.ub,
-      );
     }
   }
 }
