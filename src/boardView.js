@@ -14,6 +14,7 @@ class BoardView {
     const board = this.#getBoard(boardId);
     board.addEventListener(event, (e) => {
       const square = e.target;
+      square.focus();
       const squareBoardId = square.getAttribute("data-board-id");
       const row = square.getAttribute("data-row");
       const col = square.getAttribute("data-col");
@@ -43,6 +44,7 @@ class BoardView {
         square.setAttribute("data-row", i);
         square.setAttribute("data-col", j);
         square.setAttribute("data-board-id", boardId);
+        square.setAttribute("tabindex", "-1");
         board.appendChild(square);
       }
     }

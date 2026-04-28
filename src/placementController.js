@@ -42,6 +42,9 @@ class PlacementController {
     this.boardView.setSquareCallback(board.id, "mouseup", (id, row, col) =>
       this.#putDownShip(id, row, col),
     );
+    this.boardView.setSquareCallback(board.id, "keyup", (id, row, col) =>
+      this.#rotateShip(id, row, col),
+    );
   }
 
   #pickUpShip(boardId, row, col) {
@@ -54,6 +57,7 @@ class PlacementController {
     }
     const shipHead = this.currentShip.getCoords()[0];
     const shipVertical = this.currentShip.isVertical;
+    this.originalOrientation = shipVertical;
     this.boardView.showGhostShip(boardId, this.currentShip.getCoords());
     if (shipVertical) {
       this.shipOffset = row - shipHead[0];
@@ -80,6 +84,10 @@ class PlacementController {
       return;
     }
     const coord = this.#shipHeadFromOffset(row, col);
+    this.#traceShipHelper(boardId, coord);
+  }
+
+  #traceShipHelper(boardId, coord) {
     const isValid = this.activePlayer.board.canPlaceShip(
       ...coord,
       this.currentShip,
@@ -104,6 +112,9 @@ class PlacementController {
     if (isValid) {
       this.activePlayer.board.placeShip(...coord, this.currentShip);
     } else {
+      if (this.currentShip.isVertical !== this.originalOrientation) {
+        this.currentShip.flip();
+      }
       this.activePlayer.board.placeShip(
         this.currentShip.row,
         this.currentShip.col,
@@ -119,10 +130,19 @@ class PlacementController {
     );
   }
 
+  #rotateShip(boardId, row, col) {
+    if (!this.isDragging || this.activePlayer.board.id !== boardId) {
+      return;
+    }
+    this.currentShip.flip();
+    const coord = this.#shipHeadFromOffset(row, col);
+    this.#traceShipHelper(boardId, coord);
+  }
+
   #activateBoard(board, other, ready) {
     this.placementView.removeButtons(other.id);
     this.boardView.initializeBoard(board.id, board.lb, board.ub);
-    this.boardView.initializeBoard(other.id, other.lb, other.ub);
+    this.placementView.showMessage(other.id);
     this.#doRandomPlacement(board);
     this.#applyPlacementCallbacks(board);
     this.placementView.addButtons(

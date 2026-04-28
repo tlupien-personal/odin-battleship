@@ -18,6 +18,16 @@ class PlacementView {
     display.appendChild(readyButton);
   }
 
+  showMessage(boardId) {
+    const board = document.querySelector("#" + boardId);
+    board.innerText = "";
+    const msg = document.createElement("p");
+    msg.classList.add("ready-msg");
+    msg.classList.add("board-overlay");
+    msg.innerText = "Press Any Key to Rotate";
+    board.appendChild(msg);
+  }
+
   removeButtons(boardId) {
     const buttons = document.querySelectorAll("#" + boardId + " button");
     buttons.forEach((button) => button.remove());

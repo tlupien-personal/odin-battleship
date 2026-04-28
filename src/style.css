@@ -174,3 +174,8 @@ button:hover {
 .current-ship.hit {
   background-color: rgb(255 127 80 / 0.25);
 }
+
+.square:focus {
+  outline: none;
+  box-shadow: none;
+}
