@@ -193,4 +193,33 @@ describe("GameBoard", () => {
       expect(R[3][1]).toBe(3);
     });
   });
+
+  describe("popShipByCoord", () => {
+    test("null when no ship at coord", () => {
+      const T = new GameBoard();
+      const R = T.popShipByCoord(0, 0);
+      expect(R).toBe(null);
+    });
+
+    test("returns ship if found", () => {
+      const T = new GameBoard();
+      T.placeShip(0, 0, new Ship(2));
+      const R = T.popShipByCoord(0, 0);
+      expect(R.row).toBe(0);
+      expect(R.col).toBe(0);
+      expect(R.isVertical).toBe(false);
+      expect(R.length).toBe(2);
+    });
+
+    test("removes returned ship from board", () => {
+      const T = new GameBoard();
+      T.placeShip(0, 0, new Ship(2));
+      T.placeShip(2, 0, new Ship(3));
+      expect(T.ships.length).toBe(2);
+      const R = T.popShipByCoord(0, 0);
+      expect(T.ships.length).toBe(1);
+      expect(T.layout[0]?.[0]).toBe(undefined);
+      expect(T.layout[0]?.[1]).toBe(undefined);
+    });
+  });
 });

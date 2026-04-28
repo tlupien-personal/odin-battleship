@@ -34,7 +34,6 @@ class GameController {
       this.attacker.board.id,
       this.attacker.board.getAllShipCoords(),
       this.defender.board.id,
-      this.defender.board.getAllShipCoords(),
     );
     if (!this.attacker.isHuman) {
       this.doComputerTurn();
@@ -60,16 +59,13 @@ class GameController {
     }
   }
 
-  async doHumanTurn(e) {
+  async doHumanTurn(boardId, row, col) {
     if (this.gameOver || this.attacker == null) {
       return;
     }
-    const square = e.target;
-    if (this.attacker.board.id === square.getAttribute("data-board-id")) {
+    if (this.attacker.board.id === boardId) {
       return;
     }
-    const row = square.getAttribute("data-row");
-    const col = square.getAttribute("data-col");
     const moveResult = this.attacker.sendAttack(this.defender, row, col);
     if (!moveResult) {
       return;
@@ -98,19 +94,26 @@ class GameController {
       this.attacker.board.id,
       this.attacker.board.lb,
       this.attacker.board.ub,
-      (e) => this.doHumanTurn(e),
+    );
+    this.boardView.setSquareCallback(
+      this.attacker.board.id,
+      "click",
+      (id, row, col) => this.doHumanTurn(id, row, col),
     );
     this.boardView.initializeBoard(
       this.defender.board.id,
       this.defender.board.lb,
       this.defender.board.ub,
-      (e) => this.doHumanTurn(e),
+    );
+    this.boardView.setSquareCallback(
+      this.defender.board.id,
+      "click",
+      (id, row, col) => this.doHumanTurn(id, row, col),
     );
     this.boardView.indicateTurn(
       this.attacker.board.id,
       this.attacker.board.getAllShipCoords(),
       this.defender.board.id,
-      this.defender.board.getAllShipCoords(),
     );
     if (this.attacker.isHuman && this.defender.isHuman) {
       await this.boardView.block(0);
